@@ -30,7 +30,7 @@ module.exports = async (client) => {
     setInterval(changing_status, 12001);
 
     function changing_status() {
-        const status = [`${client.guilds.size.toLocaleString()} Guilds`, 'Tag me for Info', `${client.guilds.map(g => g.memberCount).reduce((a, b) => a + b).toLocaleString()} Users`, `${client.channels.size.toLocaleString()} Channels`, '$invite to get a invite Link', 'Bot was reworked'];
+        const status = [`${client.guilds.size.toLocaleString()} Guilds`, 'Tag me for Info', `${client.guilds.map(g => g.memberCount).reduce((a, b) => a + b).toLocaleString()} Users`, `${client.channels.size.toLocaleString()} Channels`, '$invite to get a invite Link', 'NEW UPDATE, DO $help'];
         counter++;
         if (counter === status.length) counter = 0;
         client.user.setActivity(status[counter]);
