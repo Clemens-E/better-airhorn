@@ -5,7 +5,7 @@ const ticks = '```';
 const maxTime = 2 * 1000 * 60;
 module.exports.run = async (client, message, args) => {
     const messages = [];
-
+    messages.push(message);
     if (message.guild.voice && message.guild.voice.connection) return message.channel.send('I\'m already busy in this guild.');
     const {
         channel,
@@ -106,10 +106,10 @@ ${ticks}`),
     });
     collector.on('end', async () => {
         const cmdName = await client.AudioStorage.addAudio(author.id, guild.id, options);
-        await channel.send(`Added ${cmdName}`);
-        if (client.AudioStorage.encodePrivacyMode(options.privacyMode) === 0) {
+        await channel.send(`<a:BE_YES:513771657383378973> Added ${cmdName}. ||Use \`$play ${cmdName}\` to play the Audio Clip||`);
+        if (options.privacyMode === 0) {
             await author.send(new Discord.MessageAttachment(`${client.AudioStorage.dirPath}/${fileName}`));
-            await client.AudioStorage.deleteAudio(`${client.AudioStorage.dirPath}/${fileName}`);
+            await client.AudioStorage.deleteAudio(fileName);
         }
         await channel.bulkDelete(messages);
     });
@@ -119,8 +119,8 @@ exports.help = {
     name: 'recordme',
     category: 'entertainment',
     example: 'recordme',
-    description: 'will record a short audio clip of you',
-    userPermissions: ['MANAGE_GUILD'],
+    description: 'will record a short audio clip of you, use "play <name>"',
+    userPermissions: [],
     userChannelPermissions: [],
     myPermissions: [],
     myChannelPermissions: ['SEND_MESSAGES'],

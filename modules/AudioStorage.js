@@ -64,6 +64,10 @@ class AudioStorage {
         throw new Error(`${this.dirPath} has reached its maximum size of ${this.maxSize}. Please delete files or increase maxSize`);
     }
 
+    async getAudioInfo(commandName) {
+        return (await this.db.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
+    }
+
     /**
      *finds and plays the commandName on the connection, resolves when finished playing
      *
@@ -74,11 +78,9 @@ class AudioStorage {
      */
     async playAudio(connection, commandName) {
         if (!await this.nameExists(commandName)) throw new Error('command does not exist');
-        const file = `${this.dirPath}/${
-            ((await this.db.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename}`;
-        if (!await this.fileExists(file)) throw new Error(`can not find file  ${file}`);
+        const file = `${this.dirPath}/${((await this.db.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename}`;
+        if (!(await this.fileExists(file)).exists) throw new Error(`${file} does not exists`);
         return new Promise((res, rej) => {
-            console.log(file);
             const dis = connection.play(file, {
                 volume: 1,
             });
@@ -156,16 +158,12 @@ class AudioStorage {
      */
     async deleteAudio(fileName, deleteFle = true) {
         if (deleteFle) {
-            const path = `
-        $ {
-            this.dirPath
-        }
-        /${fileName}`;
+            const path = `${this.dirPath}/${fileName}`;
             const exists = (await fsp.access(path).catch(() => false)) === undefined ? true : false;
             if (!exists) throw new Error(`${fileName} does not exists`);
             await fsp.unlink(path);
         }
-        await this.db.query('DELETE * FROM files WHERE fileName = $1', [fileName]);
+        await this.db.query('DELETE FROM files WHERE fileName = $1', [fileName]);
     }
 
     /**
