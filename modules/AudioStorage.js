@@ -64,6 +64,13 @@ class AudioStorage {
         throw new Error(`${this.dirPath} has reached its maximum size of ${this.maxSize}. Please delete files or increase maxSize`);
     }
 
+    /**
+     *returns information about a command, including privacymode, commandname, user, guild and filename.
+     *
+     * @param {string} commandName
+     * @returns {object or undefined}
+     * @memberof AudioStorage
+     */
     async getAudioInfo(commandName) {
         return (await this.db.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
     }
