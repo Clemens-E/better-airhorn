@@ -30,6 +30,7 @@
         "discord.js": "github:discordjs/discord.js",
         "enmap": "^4.3.2",
         "erlpack": "github:hammerandchisel/erlpack",
+        "event-loop-lag": "^1.4.0",
         "get-folder-size": "^2.0.1",
         "moment": "^2.24.0",
         "moment-duration-format": "^2.2.2",
