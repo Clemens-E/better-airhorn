@@ -39,6 +39,10 @@ class AudioStorage {
         this.privacyOptions = ['only send', 'only me', 'only this guild', 'everyone'];
     }
 
+    async getAudioList() {
+        return (await this.db.query('SELECT * FROM files')).rows;
+    }
+
     /**
      *Scans the size of the dir and calls itself after x ms defined in scanInterval
      *
