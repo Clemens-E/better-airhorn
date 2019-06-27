@@ -28,9 +28,6 @@ client.settings = new Enmap({
 client.usage = new Enmap({
     name: 'usage',
 });
-client.audioStorage = new Enmap({
-    name: 'audio',
-});
 
 process.on('unhandledRejection', error => {
     $console.error(error.stack);
