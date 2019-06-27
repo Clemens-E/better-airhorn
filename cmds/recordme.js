@@ -105,6 +105,12 @@ ${ticks}`),
         collector.stop();
     });
     collector.on('end', async () => {
+        if (!options.privacyMode) {
+            await channel.send('Canceling Command, Deleting Clip');
+            await channel.bulkDelete(messages);
+            await fsp.unlink(`${client.AudioStorage.dirPath}/${fileName}`);
+            return;
+        }
         const cmdName = await client.AudioStorage.addAudio(author.id, guild.id, options);
         await channel.send(`<a:BE_YES:513771657383378973> Added ${cmdName}. ||Use \`$play ${cmdName}\` to play the Audio Clip||`);
         if (options.privacyMode === 0) {
