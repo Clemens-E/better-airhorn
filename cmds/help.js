@@ -30,7 +30,7 @@ module.exports.run = async (client, message) => {
     const embed = new Discord.MessageEmbed()
         .setTitle('Help Text')
         .setDescription('React with ▶ to see the next command.\nReact with ⏩ to skip to the next category')
-        .addField('All Commands', `[all commands in one list](https://txtupload.cf/${link.hash}#${link.key})\n[Documentation](https://clemens.gitbook.io/automaton)\n[Support Server](https://discord.gg/FFeAfZ9)`)
+        .addField('All Commands', `[all commands in one list](https://txtupload.cf/${link.hash}#${link.key})\n[GitHub](https://github.com/Clemens-E/better-airhorn)\n[Support Server](https://discord.gg/FFeAfZ9)`)
         .setColor(client.config.cn);
     const msg = await message.channel.send(embed);
     setTimeout(() => {
