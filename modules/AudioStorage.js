@@ -39,8 +39,27 @@ class AudioStorage {
         this.privacyOptions = ['only send', 'only me', 'only this guild', 'everyone'];
     }
 
+    /**
+     *Returns a array with all commands in the db
+     *
+     * @returns {Array} Array filled with objects of Audio Clip infos
+     * @memberof AudioStorage
+     * @async
+     */
     async getAudioList() {
         return (await this.db.query('SELECT * FROM files')).rows;
+    }
+
+    /**
+     *Reviews a command (sets it on true)
+     *
+     * @param {*} commandName
+     * @param {boolean} [value=true]
+     * @memberof AudioStorage
+     * @async
+     */
+    async review(commandName, value = true) {
+        await this.db.query('UPDATE files SET reviewed = $1 WHERE commandName = $2 ', [value, commandName]);
     }
 
     /**
@@ -74,6 +93,7 @@ class AudioStorage {
      * @param {string} commandName
      * @returns {object or undefined}
      * @memberof AudioStorage
+     * @async
      */
     async getAudioInfo(commandName) {
         return (await this.db.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
@@ -86,6 +106,7 @@ class AudioStorage {
      * @param {*} commandName the commandName you want to play
      * @returns {Promise} resolves after finished playing
      * @memberof AudioStorage
+     * @async
      */
     async playAudio(connection, commandName) {
         if (!await this.nameExists(commandName)) throw new Error('command does not exist');
@@ -119,6 +140,7 @@ class AudioStorage {
      * @param {string} name
      * @returns {boolean} if the name is used or not
      * @memberof AudioStorage
+     * @async
      */
     async nameExists(name) {
         const names = (await this.db.query('SELECT commandName FROM files')).rows.map(x => x.commandname);
@@ -131,6 +153,7 @@ class AudioStorage {
      * @param {string} path
      * @returns {object} property's: exists and birthtime
      * @memberof AudioStorage
+     * @async
      */
     async fileExists(path) {
         const o = {
@@ -149,6 +172,7 @@ class AudioStorage {
      * @param {object} options has to include "commandName", "fileName", "privacyMode"
      * @returns {string} commandName
      * @memberof AudioStorage
+     * @async
      */
     async addAudio(user, guild, options) {
         const requiredProps = ['commandName', 'fileName', 'privacyMode'];
@@ -166,6 +190,7 @@ class AudioStorage {
      * @param {string} fileName name of the file to delete
      * @param {boolean} [deleteFle=true] if it should unlink the file
      * @memberof AudioStorage
+     * @async
      */
     async deleteAudio(fileName, deleteFle = true) {
         if (deleteFle) {
@@ -208,6 +233,7 @@ class AudioStorage {
      * @param {String} tmpPath The path for a temporary file, will be deleted after encoding finished
      * @param {String} outputName The path for the mp3 encoded Audio
      * @param {Number} timeout After what time to stop the recording.
+     * @returns {Promise} returns the path if anything worked well.
      */
     record(author, conn, tmpPath, outputName, timeout) {
         const outputPath = `${this.dirPath}/${outputName}`;
