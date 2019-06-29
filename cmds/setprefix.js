@@ -1,6 +1,8 @@
 module.exports.run = async (client, message, args) => {
-    client.settings.set(message.guild.id, args.join(' '), 'prefix');
-    message.channel.send(`Changed prefix to ${args.join(' ')}`);
+    const prefix = args.join(' ');
+    if (prefix.length > 20) return message.channel.send('Prefix too long.');
+    client.settings.set(message.guild.id, prefix, 'prefix');
+    message.channel.send(`Changed prefix to ${prefix}`);
 };
 
 
