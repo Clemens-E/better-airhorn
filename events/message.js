@@ -14,6 +14,10 @@ module.exports = async (client, message) => {
     const command = args.shift().toLowerCase();
     const cmd = client.commands.get(command);
     if (cmd) {
+        message.flags = [];
+        while (args[0] && args[0][0] === '-') {
+            message.flags.push(args.shift().slice(1));
+        }
         const channel = message.channel;
         const uMissingPerms = message.member.permissions.missing(cmd.help.userPermissions);
         const uChannelMissingPerms = channel.permissionsFor(message.member).missing(cmd.help.userChannelPermissions);
