@@ -1,8 +1,13 @@
 const Discord = require('discord.js');
 module.exports = async (client, message) => {
     if (message.author.bot) return;
-    const prefix = client.config.prefix;
     if (message.channel.type === 'dm') return;
+    if (!client.settings.has(message.guild.id)) {
+        client.settings.set(message.guild.id, {
+            prefix: client.config.prefix,
+        });
+    }
+    const prefix = client.settings.get(message.guild.id, 'prefix') || client.config.prefix;
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>)`);
     if (prefixRegex.test(message.content)) {
         message.channel.send(new Discord.MessageEmbed()
