@@ -16,7 +16,7 @@
 \
 `$recordme [time]` | The Bot will join your VoiceChannel and will record you for [time] seconds, if not provided, he will record you for 5 Seconds (maximum). For Information about Storage see [this Point](#Recorded-Audio).\
 `$deleteaudio <name>` | Will delete a Audio Clip you own by its name.\
-`$play <file>` | The Bot will join your VoiceChannel and play a earlier recorded Audio Clip.
+`$play <file>` | The Bot will join your VoiceChannel and play a earlier recorded Audio Clip.\
 `$listaudios <mine | guild | all>` | Sends a message Listing every accessible Audio Clip filtered by the parameter.
 
 There are some more Commands, see them with `$help` and go trough them.
