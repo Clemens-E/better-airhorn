@@ -4,7 +4,7 @@ module.exports.run = async (client, message, args) => {
     if (!cmd) return channel.send(`can't find a Audio Clip named ${args[0]}`);
     if (cmd.user !== author.id) return channel.send('You can only delete AudioClips you created.');
     await client.AudioStorage.deleteAudio(cmd.filename);
-    channel.send(`Done. FileName: \`${cmd.filename}\`\nCommandName: \${cmd.commandname}\``);
+    channel.send(`Done. FileName: \`${cmd.filename}\`\nCommandName: \`${cmd.commandname}\``);
 };
 
 
