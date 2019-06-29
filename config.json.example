@@ -1,0 +1,17 @@
+{
+    "token": "Discord API Token",
+    "psqllogin": "psql login url",
+    "prefix": "$",
+    "ownerid": "<yourid>",
+    "dbltoken": "Discord Bots Token",
+    "cs": 4896839,
+    "ce": 13652807,
+    "cn": 40863,
+    "cw": 11220480,
+    "ci": "36393f",
+    "loading": "<a:BE_loading:505378765950550036>",
+    "updating": "<a:BE_updating:505372749846544385>",
+    "crashed": "<:crashed:589476154201866243>",
+    "voteauth": "<post secret from dbl>",
+    "voteurl": "https://webhooks.chilo.space/better-airhorn"
+}
