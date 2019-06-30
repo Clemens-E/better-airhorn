@@ -7,7 +7,7 @@ const Enmap = require('enmap');
 const http = require('http');
 $console.success(`Process started at ${new Date(Date.now())}`);
 
-const shardCount = (parseInt(JSON.parse(fs.readFileSync('./storage/guildCount.json')).size / 500)) || 0;
+const shardCount = (parseInt(JSON.parse(fs.readFileSync('./storage/guildCount.json')).size / 500), 10) || 0;
 const client = new Discord.Client({
     shardCount: shardCount !== 0 ? shardCount : 'auto',
     presence: {
@@ -66,4 +66,3 @@ http.createServer((req, res) => {
     res.write('Beep Beep Boop I work');
     res.end();
 }).listen(3001);
-

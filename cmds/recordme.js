@@ -30,7 +30,7 @@ If you already voted, but this doesn't work, wait up to 5 Minutes.`)
         else return channel.send(`I'm already recording you.\nIf not, wait ${(((fileStat.birthtime + maxTime) - Date.now()) / 1000 / 60).toFixed(1)} Minutes and try again`);
     }
 
-    const parsed = (parseInt(args[0]) * 1000) || 5000;
+    const parsed = (parseInt(args[0], 10) * 1000) || 5000;
     const timeout = parsed > 5000 ? 5000 : parsed;
 
     const conn = await message.member.voice.channel.join().catch(() => null);
