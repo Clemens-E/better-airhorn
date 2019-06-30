@@ -1,17 +1,4 @@
-module.exports.run = async (client, message, args) => {
-    let volume = 1;
-    const parsed = parseFloat(args[0]);
-    if (parsed && parsed > 0 && parsed < 20) volume = parsed;
-    const voiceChannel = message.member.voice.channel;
-    voiceChannel.join().then(connection => {
-        const dispatcher = connection.play('./music/badumtss.mp3', {
-            volume: volume,
-        });
-        dispatcher.on('end', () => {
-            voiceChannel.leave();
-        });
-    });
-};
+module.exports.run = (client, message, args) => require('../modules/util.js').playFile(message.member.voice.channel, './music/badumtss.mp3', args[0]);
 
 exports.help = {
     name: 'badumtss',

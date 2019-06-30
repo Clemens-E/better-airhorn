@@ -1,5 +1,21 @@
 const fetch = require('node-fetch');
 
+module.exports.playFile = (voiceChannel, path, volumeString, leaveOnEnd = true) => {
+    let volume = 1;
+    const parsed = parseFloat(volumeString, 10);
+    if (parsed && parsed > 0 && parsed < 20) volume = parsed;
+    return new Promise((res) => {
+        voiceChannel.join().then(connection => {
+            const dispatcher = connection.play(path, {
+                volume: volume,
+            });
+            dispatcher.on('end', () => {
+                if (leaveOnEnd) voiceChannel.leave();
+                res();
+            });
+        });
+    });
+};
 
 module.exports.dbl = class VoteRequest {
     constructor(base, authentication) {
