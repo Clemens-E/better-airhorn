@@ -40,6 +40,6 @@ Clone this repository and copy the text in [config.json.example](config.json.exa
 
 ## Dev Branch
 
-The [Dev Branch](/Clemens-E/better-airhorn/tree/dev) is only used to transfer code between machines. Under no circumstances you should run this code, it may be unstable, unfinished or even include known issues.
+The [Dev Branch](../../tree/dev) is only used to transfer code between machines. Under no circumstances you should run this code, it may be unstable, unfinished or even include known issues.
 
 
