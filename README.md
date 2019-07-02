@@ -5,7 +5,7 @@
 [![Discord Bots](https://discordbots.org/api/widget/servers/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)
 [![Discord Bots](https://discordbots.org/api/widget/upvotes/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)
 [![Discord Bots](https://discordbots.org/api/widget/lib/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)
-[![Discord Bots](https://discordbots.org/api/widget/owner/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)
+[![Discord Bots](https://discordbots.org/api/widget/owner/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)\
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/020d47a704a046b2b5c6d7fe7618fae6)](https://www.codacy.com/app/Clemens-E/better-airhorn?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Clemens-E/better-airhorn&amp;utm_campaign=Badge_Grade)
 [![Known Vulnerabilities](https://snyk.io//test/github/Clemens-E/better-airhorn/badge.svg?targetFile=package.json)](https://snyk.io//test/github/Clemens-E/better-airhorn?targetFile=package.json)
 
