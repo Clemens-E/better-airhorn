@@ -7,6 +7,7 @@ require('moment-duration-format');
 const os = require('os');
 const cpuStat = require('cpu-stat');
 const lag = require('event-loop-lag')(1000);
+const fetch = require('node-fetch');
 const ticks = '```';
 module.exports.run = async (client, message) => {
     let commandsUsed = 0;
@@ -62,8 +63,12 @@ Discord.js: ${version}
 ${ticks}
 `)
             .addField('**> Shards**', `
-${shards.map(x=> `Shard ${x.id}: ${x.status === 0 ? '<:online:596442525636624409> Online' : [1, 2].includes(x.status) ? `${client.config.loading} Reconnecting` : '<:offline:596443669280587776> Offline'}`).join('\n')}
+${shards.map(x=> `Shard ${x.id}: `).join('\n')}
 `)
+            .addField('**> Other Services**', `
+[Vote Server](https://webhooks.chilo.space/better-airhorn/): ${await checkStatus('https://webhooks.chilo.space/better-airhorn/')}
+[Status Page](https://bots.chilo.space/better-airhorn): ${await checkStatus('https://bots.chilo.space/better-airhorn')}
+            `)
             .setFooter(`Developer & Owner: ${(await client.users.fetch(client.config.ownerid).catch(()=> null)).tag}`);
         message.channel.send(embed);
     });
@@ -79,3 +84,8 @@ exports.help = {
     myPermissions: [],
     myChannelPermissions: ['SEND_MESSAGES'],
 };
+
+async function checkStatus(url) {
+    const status = (await fetch(url)).status;
+    return (status < 300 && status >= 200 ? '<:online:596442525636624409> Online' : '<:offline:596443669280587776> Offline / Error');
+}
