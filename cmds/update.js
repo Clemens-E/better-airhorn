@@ -16,6 +16,8 @@ module.exports.run = async (client, message) => {
             channel: msg.channel.id,
             content: stdout,
         });
+        await promisify(setTimeout)(1000);
+        await msg.edit(`${raw}Restarting Process now, this might take a while ${client.config.loading}`);
         await client.destroy();
         console.log('updated code. restarting now');
         process.exit(0);
