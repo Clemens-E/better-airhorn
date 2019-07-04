@@ -42,7 +42,7 @@
     "opus": "0.0.0",
     "pg": "^7.11.0",
     "shortid": "^2.2.14",
-    "snyk": "^1.189.0"
+    "snyk": "^1.191.0"
   },
   "nodemonConfig": {
     "ignore": [
