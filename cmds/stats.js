@@ -63,7 +63,7 @@ Discord.js: ${version}
 ${ticks}
 `)
             .addField('**> Shards**', `
-${shards.map(x=> `Shard ${x.id}: `).join('\n')}
+            ${shards.map(x=> `Shard ${x.id}: ${x.status === 0 ? '<:online:596442525636624409> Online' : [1, 2].includes(x.status) ? `${client.config.loading} Reconnecting` : '<:offline:596443669280587776> Offline'}`).join('\n')}
 `)
             .addField('**> Other Services**', `
 [Vote Server](https://webhooks.chilo.space/better-airhorn/): ${await checkStatus('https://webhooks.chilo.space/better-airhorn/')}
