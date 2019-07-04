@@ -4,7 +4,7 @@ module.exports.run = async (client, message) => {
     const msg = await message.channel.send(`${client.config.updating} executing pull command...`);
     exec('git pull origin master').then(async r => {
         const stdout = r.stdout;
-        if (stdout === 'Already up to date.\n') return msg.edit(stdout);
+        if (['Already up to date.\n', 'Already up-to-date.\n'].includes(stdout)) return msg.edit(stdout);
         if (message.author.id !== client.config.ownerid) return msg.edit('Updates available, but you don\'t have enough permissions.');
         const raw = `\`\`\`fix\n${stdout}\`\`\``;
         await msg.edit(`${raw}Updating dependencies ${client.config.loading}`);
@@ -17,7 +17,7 @@ module.exports.run = async (client, message) => {
             content: stdout,
         });
         await promisify(setTimeout)(1000);
-        await msg.edit(`${raw}Restarting Process now, this might take a while ${client.config.loading}`);
+        await msg.edit(`${raw}Restarting Process, this might take a while ${client.config.loading}`);
         await client.destroy();
         console.log('updated code. restarting now');
         process.exit(0);
