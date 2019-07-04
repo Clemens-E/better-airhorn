@@ -1,11 +1,12 @@
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
 module.exports.run = async (client, message) => {
+    if (message.author.id !== client.config.ownerid) return message.channel.send('Updating takes a lot of time, thats why this command is only for the Owner, sorry.');
     const msg = await message.channel.send(`${client.config.updating} executing pull command...`);
     exec('git pull origin master').then(async r => {
         const stdout = r.stdout;
+        // Windows uses no dashes and Linux uses dashes...
         if (['Already up to date.\n', 'Already up-to-date.\n'].includes(stdout)) return msg.edit(stdout);
-        if (message.author.id !== client.config.ownerid) return msg.edit('Updates available, but you don\'t have enough permissions.');
         const raw = `\`\`\`fix\n${stdout}\`\`\``;
         await msg.edit(`${raw}Updating dependencies ${client.config.loading}`);
         const worked = await exec('npm i').catch(console.log);
