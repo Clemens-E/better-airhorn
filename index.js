@@ -60,9 +60,12 @@ client.login(config.token);
 
 // Listen on http requests for uptime robot
 http.createServer((req, res) => {
-    res.writeHead(200, {
-        'Content-Type': 'text/html',
-    });
-    res.write('Beep Beep Boop I work');
+    const mapped = client.ws.shards.map(x => x.status);
+    if (mapped.length === 0) mapped.push(10);
+    res.writeHead(mapped.reduce((a, b) => a + b) ===
+        0 ? 200 : 500, {
+            'Content-Type': 'text/html',
+        });
+    res.write(`Process is online, all statuses of the clients are: ${client.ws.shards.map(x=> x.status).join(';')}`);
     res.end();
 }).listen(3001);
