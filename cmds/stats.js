@@ -28,6 +28,10 @@ module.exports.run = async (client, message) => {
         }
         const duration = moment.duration(client.uptime).format(' D [Days], H [Hours], m [Minutes], s [Seconds]');
         const embed = new MessageEmbed().setColor(client.config.cn);
+        const shards = client.ws.shards.map(x => ({
+            id: x.id,
+            status: x.status,
+        }));
         embed.addField('**> Bot User**', `${ticks}js
 Uptime: ${duration}
 Current Shard: ${message.guild.shardID}
@@ -56,6 +60,9 @@ ${ticks}js
 Node.js: ${process.version}
 Discord.js: ${version}
 ${ticks}
+`)
+            .addField('**> Shards**', `
+${shards.map(x=> `Shard ${x.id}: ${x.status === 0 ? '<:online:596442525636624409> Online' : [1, 2].includes(x.status) ? `${client.config.loading} Reconnecting` : '<:offline:596443669280587776> Offline'}`).join('\n')}
 `)
             .setFooter(`Developer & Owner: ${(await client.users.fetch(client.config.ownerid).catch(()=> null)).tag}`);
         message.channel.send(embed);
