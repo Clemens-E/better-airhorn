@@ -1,6 +1,10 @@
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
+const ticks = '```';
+const fetch = require('node-fetch');
 module.exports.run = async (client, message) => {
+    const log = (await (await fetch('https://api.github.com/repos/Clemens-E/better-airhorn/commits')).json()).slice(0, 5);
+    await message.channel.send(`Changes:${ticks}py\n${log.map(x=> '@ ' + x.commit.message).join('\n')}${ticks}`);
     if (message.author.id !== client.config.ownerid) return message.channel.send('Updating takes a lot of time, thats why this command is only for the Owner, sorry.');
     const msg = await message.channel.send(`${client.config.updating} executing pull command...`);
     exec('git pull origin master').then(async r => {
