@@ -2,17 +2,37 @@
 const fetch = require('node-fetch');
 const child = require('child_process');
 module.exports.run = async (client, message, args) => {
-    if (message.author.id !== client.config.ownerid) return;
     const channel = message.channel;
     const guild = message.guild;
+    let evaled;
+    let evaledByApi = false;
     try {
         const code = args.join(' ');
-        let evaled = eval(code);
-        evaled = await clean(client, evaled);
+        if (message.author.id === client.config.ownerid) {
+            evaled = eval(code);
+
+        } else {
+            evaledByApi = true;
+            const r = await (await fetch('https://run.glot.io/languages/javascript/latest', {
+                method: 'POST',
+                headers: {
+                    Authorization: 'Token ' + client.config.glottoken,
+                    'Content-Type': 'application/json',
+                },
+                body: `{
+                    "files": [{
+                        "name": "index.js",
+                        "content": "${code}",
+                    }],
+                }`,
+            })).json();
+            if (r.stderr.length > 0) throw new Error(r.stderr);
+            evaled = r.stdout;
+        }
+        if (!evaledByApi) evaled = await clean(client, evaled);
         if (evaled.length < 2000) {
-            channel.send(evaled, {
-                code: 'xl',
-            });
+            if (evaled.length === 0) return channel.send('No Output. Use `console.log` to generate outout.');
+            channel.send(`\`\`\`xl\n${evaled}\`\`\``);
         } else {
             fetch('https://txtupload.cf/api/upload', {
                     method: 'post',
@@ -25,7 +45,8 @@ module.exports.run = async (client, message, args) => {
                 .then(r => channel.send(`https://txtupload.cf/${r.hash}#${r.key}`));
         }
     } catch (err) {
-        message.channel.send(`\`ERROR\` \`\`\`xl\n${await clean(client, err)}\n\`\`\``);
+        evaled = err.message;
+        message.channel.send(`\`ERROR\` \`\`\`xl\n${ evaled.replace(client.token, 'no, fuck you')}\`\`\``);
     }
 };
 async function clean(client, text) {
@@ -41,7 +62,7 @@ async function clean(client, text) {
     text = text
         .replace(/`/g, '`' + String.fromCharCode(8203))
         .replace(/@/g, '@' + String.fromCharCode(8203))
-        .replace(client.token, 'my token');
+        .replace(client.token, 'no, fuck you');
 
     return text;
 }
