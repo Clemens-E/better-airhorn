@@ -4,6 +4,7 @@
     "prefix": "$",
     "ownerid": "<yourid>",
     "dbltoken": "Discord Bots Token",
+    "glottoken": "glot.io api token",
     "cs": 4896839,
     "ce": 13652807,
     "cn": 40863,
