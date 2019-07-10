@@ -8,7 +8,7 @@ module.exports.run = async (client, message, args) => {
     let evaledByApi = false;
     try {
         const code = args.join(' ');
-        if (message.author.id === client.config.ownerid) {
+        if (message.author.id === client.config.ownerid && message.flags[0] !== 'b') {
             evaled = eval(code);
 
         } else {
@@ -19,14 +19,15 @@ module.exports.run = async (client, message, args) => {
                     Authorization: 'Token ' + client.config.glottoken,
                     'Content-Type': 'application/json',
                 },
-                body: `{
-                    "files": [{
-                        "name": "index.js",
-                        "content": "${code}",
+                body: JSON.stringify({
+                    'files': [{
+                        'name': 'index.js',
+                        'content': code,
                     }],
-                }`,
+                }),
             })).json();
-            if (r.stderr.length > 0) throw new Error(r.stderr);
+            if (r.message === 'Code exceeded the maximum allowed running time') throw new Error(r.message);
+            if (!!r.stderr && r.stderr.length > 0) throw new Error(r.stderr);
             evaled = r.stdout;
         }
         if (!evaledByApi) evaled = await clean(client, evaled);
