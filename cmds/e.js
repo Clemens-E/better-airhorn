@@ -26,7 +26,7 @@ module.exports.run = async (client, message, args) => {
                     }],
                 }),
             })).json();
-            if (r.message === 'Code exceeded the maximum allowed running time') throw new Error(r.message);
+            if (r.message) throw new Error(r.message);
             if (!!r.stderr && r.stderr.length > 0) throw new Error(r.stderr);
             evaled = r.stdout;
         }
