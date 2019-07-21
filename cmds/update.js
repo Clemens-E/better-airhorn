@@ -1,37 +1,43 @@
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
-const ticks = '```';
-const fetch = require('node-fetch');
+const timeout = promisify(setTimeout);
+
 module.exports.run = async (client, message) => {
-    const log = (await (await fetch('https://api.github.com/repos/Clemens-E/better-airhorn/commits')).json()).slice(0, 5);
-    await message.channel.send(`Changes:${ticks}py\n${log.map(x=> '@ ' + x.commit.message).join('\n')}${ticks}`);
     if (message.author.id !== client.config.ownerid) return message.channel.send('Updating takes a lot of time, thats why this command is only for the Owner, sorry.');
-    const msg = await message.channel.send(`${client.config.updating} executing pull command...`);
+    if (!client.config.prod) return message.channel.send('client is not running in production and will not update.');
+    const msg = await message.channel.send(`${client.config.updating} looking for updates...`);
+
     exec('git pull origin master').then(async r => {
         const stdout = r.stdout;
-        // Windows uses no dashes and Linux uses dashes...
         if (['Already up to date.\n', 'Already up-to-date.\n'].includes(stdout)) return msg.edit(stdout);
+        await msg.edit('found updates, deploying them.');
+        client.shuttingDown = true;
+        await timeout(1000);
         const raw = `\`\`\`fix\n${stdout}\`\`\``;
-        await msg.edit(`${raw}Updating dependencies ${client.config.loading}`);
-        const worked = await exec('npm i').catch(console.log);
-        if (!worked) return msg.edit(`${raw}Updating dependencies failed, restart cancelled`);
-        await msg.edit(`${raw}Dependencies updated.`);
+        if (stdout.includes('package')) {
+            await msg.edit(`${raw}Updating dependencies ${client.config.loading}`);
+            const worked = await exec('npm i').catch(console.error);
+            if (!worked) return msg.edit(`${raw}Updating dependencies failed, restart cancelled`);
+            await msg.edit(`${raw}Dependencies updated.`);
+        }
+
         client.settings.set('lastMessage', {
             msg: msg.id,
             channel: msg.channel.id,
             content: stdout,
         });
-        await promisify(setTimeout)(1000);
+        await msg.edit(`${raw}Waiting for ${client.AudioStorage.tasks.length + 1} to finish ${client.config.loading}`);
+        await client.AudioStorage.shutdown();
+        await timeout(1000);
         await msg.edit(`${raw}Restarting Process, this might take a while ${client.config.loading}`);
+        await client.settings.close();
         await client.destroy();
         console.log('updated code. restarting now');
         process.exit(0);
     }).catch(err => {
         msg.edit('Something went wrong.');
-        console.log(err);
+        console.error(err);
     });
-
-
 };
 
 exports.help = {
