@@ -5,8 +5,6 @@ const $console = require('Console');
 const config = require('./config.json');
 const Enmap = require('enmap');
 const http = require('http');
-$console.success(`Process started at ${new Date(Date.now())}`);
-
 const shardCount = (parseInt(JSON.parse(fs.readFileSync('./storage/guildCount.json')).size / 500, 10)) || 0;
 const client = new Discord.Client({
     shardCount: shardCount !== 0 ? shardCount : 'auto',
@@ -20,6 +18,7 @@ const client = new Discord.Client({
     messageCacheLifetime: 60,
     messageSweepInterval: 61,
 });
+client.sentry = require('@sentry/node');
 client.config = config;
 client.dbl = new dbl(client.config.dbltoken);
 client.settings = new Enmap({
@@ -28,9 +27,15 @@ client.settings = new Enmap({
 client.usage = new Enmap({
     name: 'usage',
 });
-
+if (config.prod) {
+    client.sentry.init({
+        dsn: config.sentry,
+    });
+    $console.warn('reporting errors to sentry');
+}
 process.on('unhandledRejection', error => {
     $console.error(error.stack);
+
 });
 
 fs.readdir('./events/', (err, files) => {
