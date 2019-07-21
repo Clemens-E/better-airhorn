@@ -26,7 +26,7 @@ module.exports.run = async (client, message) => {
             channel: msg.channel.id,
             content: stdout,
         });
-        await msg.edit(`${raw}Waiting for ${client.AudioStorage.tasks.length + 1} to finish ${client.config.loading}`);
+        await msg.edit(`${raw}Waiting for ${client.AudioStorage.tasks.length + 1} Task to finish ${client.config.loading}`);
         await client.AudioStorage.shutdown();
         await timeout(1000);
         await msg.edit(`${raw}Restarting Process, this might take a while ${client.config.loading}`);
