@@ -9,7 +9,7 @@ module.exports.run = async (client, message, args) => {
     if (!cmd) return channel.send(`I can't find such audio named \`${args[0]}\`:(`);
     switch (parseInt(cmd.privacymode)) {
         case 0:
-            throw new Error('This should **never** happen, if this persists please report it in the support server ||link is in the help command||');
+            throw new Error('This should **never** happen, if this persists please report it in the support server.');
         case 1:
             if (author.id !== cmd.user) return channel.send(deniedMsg);
             break;
