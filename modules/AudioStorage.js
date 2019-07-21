@@ -1,7 +1,8 @@
 const Lame = require('node-lame').Lame;
 const fsp = require('fs').promises;
 const fs = require('fs');
-const getSize = require('util').promisify(require('get-folder-size'));
+const promisify = require('util').promisify;
+const getSize = promisify(require('get-folder-size'));
 const id = require('shortid');
 const keyCheck = (function () {
     const {
@@ -26,8 +27,8 @@ class AudioStorage {
      *Creates an instance of AudioStorage.
      * @param {pg.Pool} psqlInstance pool to a psql connection
      * @param {String} dirPath Path to save the audio too.
-     * @param {Number} maxSize
-     * @param {Number} [scanInterval=10 * 1000]
+     * @param {Number} maxSize maximal Size of the directory
+     * @param {Number} [scanInterval=10 * 1000] interval to scan the directory
      * @memberof AudioStorage
      */
     constructor(psqlInstance, dirPath, maxSize, scanInterval = 10 * 1000) {
@@ -37,12 +38,48 @@ class AudioStorage {
         this.currentSize = 0;
         this.scanInterval = scanInterval;
         this.privacyOptions = ['only send', 'only me', 'only this guild', 'everyone'];
+
+        /*
+            Each element should look like this:
+            {
+                id:      short-id
+                started: Date.now()
+                done:    boolean
+            }
+        */
+        this.tasks = [];
+        this.interval = true;
+        this.acceptNewTasks = true;
+    }
+
+    /**
+     *Will reject new tasks and wait until all Tasks finished, forces the shutdown after 10 Seconds
+     *
+     * @returns {Promise<boolean>} returns true if Tasks where closed by force
+     * @memberof AudioStorage
+     */
+    async shutdown() {
+        const timeout = promisify(setTimeout);
+        let retries = 0;
+        let force = false;
+        this.interval = false;
+        this.acceptNewTasks = false;
+        while (this.tasks.length !== 0) {
+            await timeout(1000);
+            retries++;
+            if (retries > 10) {
+                force = true;
+                break;
+            }
+        }
+        await this.db.end();
+        return force;
     }
 
     /**
      *Returns a array with all commands in the db
      *
-     * @returns {Array} Array filled with objects of Audio Clip infos
+     * @returns {Array<object>} Array filled with objects of Audio Clip infos
      * @memberof AudioStorage
      * @async
      */
@@ -53,7 +90,7 @@ class AudioStorage {
     /**
      *Reviews a command (sets it on true)
      *
-     * @param {*} commandName
+     * @param {string} commandName
      * @param {boolean} [value=true]
      * @memberof AudioStorage
      * @async
@@ -72,6 +109,7 @@ class AudioStorage {
         const size = await getSize(this.dirPath);
         // In GB
         this.currentSize = (size / 1024 / 1024 / 1024).toFixed(2);
+        if (!this.interval) return;
         setTimeout(() => this._updateSize(), this.scanInterval);
     }
 
@@ -100,15 +138,16 @@ class AudioStorage {
     }
 
     /**
-     *finds and plays the commandName on the connection, resolves when finished playing
+     *Finds and plays the commandName on the connection, resolves when finished playing
      *
      * @param {*} connection a voice channel connection
-     * @param {*} commandName the commandName you want to play
+     * @param {string} commandName the commandName you want to play
      * @returns {Promise} resolves after finished playing
      * @memberof AudioStorage
      * @async
      */
     async playAudio(connection, commandName) {
+        const taskID = this.addTask();
         if (!await this.nameExists(commandName)) throw new Error('command does not exist');
         const file = `${this.dirPath}/${((await this.db.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename}`;
         if (!(await this.fileExists(file)).exists) throw new Error(`${file} does not exists`);
@@ -116,8 +155,16 @@ class AudioStorage {
             const dis = connection.play(file, {
                 volume: 1,
             });
-            dis.on('end', res);
-            dis.on('error', rej);
+            const resolveIT = () => {
+                res();
+                this.removeTask(taskID);
+            };
+            dis.on('close', resolveIT);
+            dis.on('end', resolveIT);
+            dis.on('error', () => {
+                rej();
+                this.removeTask(taskID);
+            });
         });
     }
 
@@ -130,8 +177,7 @@ class AudioStorage {
      */
     getNewPath(shardID) {
         const time = Date.now().toString();
-        const path = `${id.generate()}-${time.substring(time.length / 2, time.length)}-${shardID || 0}`;
-        return path;
+        return `${id.generate()}-${time.substring(time.length / 2, time.length)}-${shardID || 0}`;
     }
 
     /**
@@ -175,13 +221,16 @@ class AudioStorage {
      * @async
      */
     async addAudio(user, guild, options) {
+        const taskID = this.addTask();
         const requiredProps = ['commandName', 'fileName', 'privacyMode'];
         if (requiredProps.some(keyCheck, options)) throw new TypeError('The parameter "options" is missing one or multiple property\'s');
         if (typeof options.privacyMode === 'string') options.privacyMode = this.encodePrivacyMode(options.privacyMode);
 
         if (options.privacyMode === -1) throw new Error('passed privacyMode is not a valid option.');
-        return (await this.db.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
+        const r = (await this.db.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
             [options.commandName, options.fileName, options.privacyMode, guild, user])).rows[0].name;
+        this.removeTask(taskID);
+        return r;
     }
 
     /**
@@ -193,6 +242,7 @@ class AudioStorage {
      * @async
      */
     async deleteAudio(fileName, deleteFle = true) {
+        const taskID = this.addTask();
         if (deleteFle) {
             const path = `${this.dirPath}/${fileName}`;
             const exists = (await fsp.access(path).catch(() => false)) === undefined ? true : false;
@@ -200,13 +250,14 @@ class AudioStorage {
             await fsp.unlink(path);
         }
         await this.db.query('DELETE FROM files WHERE fileName = $1', [fileName]);
+        this.removeTask(taskID);
     }
 
     /**
      *Returns the Description String of the Privacy Mode
      *
-     * @param {Number} mode
-     * @returns {String}
+     * @param {number} mode
+     * @returns {string}
      * @memberof AudioStorage
      */
     decodePrivacyMode(mode) {
@@ -226,7 +277,46 @@ class AudioStorage {
     }
 
     /**
-     *records and saves a file with the recorded voice of author
+     *Adds a new Task, it should be removed after its finished
+     *
+     * @returns {string} the id of the task to identify the task
+     * @memberof AudioStorage
+     * @private
+     */
+    addTask() {
+        if (!this.acceptNewTasks) throw new Error('process is shutting down, task was denied.');
+        const time = Date.now().toString();
+        const taskID = `${id.generate()}-${time.substring(time.length / 2, time.length)}`;
+        this.tasks.push({
+            id: taskID,
+            started: Date.now(),
+            done: false,
+        });
+        return taskID;
+    }
+
+    /**
+     *Removes a Task, requires the taskID
+     *
+     * @param {string} taskID
+     * @returns {boolean} if the task was removed
+     * @memberof AudioStorage
+     * @private
+     */
+    removeTask(taskID) {
+        for (let index = 0; index < this.tasks.length; index++) {
+            const element = this.tasks[index];
+            if (element.id === taskID) {
+                this.tasks[index].done = true;
+                this.tasks.splice(index, 1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *Records and saves a file with the recorded voice of author
      *
      * @param {User} author The User to record the Audio from
      * @param {VoiceConnection} conn The Discord Connection to a voiceChannel
@@ -236,6 +326,7 @@ class AudioStorage {
      * @returns {Promise} returns the path if anything worked well.
      */
     record(author, conn, tmpPath, outputName, timeout) {
+        const taskID = this.addTask();
         const outputPath = `${this.dirPath}/${outputName}`;
         return new Promise((res) => {
             const stream = conn.receiver.createStream(author, {
@@ -256,6 +347,7 @@ class AudioStorage {
                 await encoder.encode();
                 await fsp.unlink(tmpPath);
                 res(outputPath);
+                this.removeTask(taskID);
             });
         });
     }

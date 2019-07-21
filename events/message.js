@@ -54,8 +54,11 @@ module.exports = async (client, message) => {
             time: Date.now(),
             user: message.author.id,
         }, 'usage', true);
+        if (client.shuttingDown) return channel.send('client is shutting down, please try again later.');
 
         cmd.run(client, message, args).catch(e => {
+            if (client.config.prod) client.sentry.captureException(e);
+
             channel.send(
                 new Discord.MessageEmbed()
                 .setTitle(`${client.config.crashed} ${cmd.help.name} Crashed`)
