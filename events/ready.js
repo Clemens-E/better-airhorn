@@ -11,7 +11,7 @@ module.exports = async (client) => {
         connectionString: client.config.psqllogin,
     });
     client.AudioStorage = new (require('../modules/AudioStorage.js'))(pool, './recordedAudio', 40);
-    client.voice.connections.forEach(e => e.leave());
+    client.voice.connections.forEach(e => e.leave().catch(() => null));
     client.dbl.postStats(client.guilds.size, undefined, client.guilds.first().shard.manager.totalShards);
     client.dblAPI = new util.dbl(client.config.voteurl, client.config.voteauth);
     if (client.settings.has('lastMessage')) {
