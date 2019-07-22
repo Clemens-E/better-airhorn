@@ -9,6 +9,12 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/020d47a704a046b2b5c6d7fe7618fae6)](https://www.codacy.com/app/Clemens-E/better-airhorn?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Clemens-E/better-airhorn&amp;utm_campaign=Badge_Grade)
 [![Known Vulnerabilities](https://snyk.io//test/github/Clemens-E/better-airhorn/badge.svg?targetFile=package.json)](https://snyk.io//test/github/Clemens-E/better-airhorn?targetFile=package.json)
 
+
+## Host Information
+![Average CPU Usage](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.cpu&alarm=10min_cpu_usage&refresh=auto&label=Average%20CPU%20Usage)
+![System Uptime](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.uptime&label=System%20Uptime&refresh=10)\
+![Available Memory](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.ram&dimension=free&label=Available%20Memory&refresh=auto&values_color=gray:null|green%3C2000|orange%3C1000|red%3C500)
+![Sockets](https://dashboard.chilo.space/api/v1/badge.svg?chart=apps.sockets&label=Sockets&refresh=auto&value_color=grey:null|green%3C500|orange%3C1000|red)
 ## Recording Usage
 [] = Optional\
 <> = needed\
