@@ -13,8 +13,9 @@
 ## Host Information
 ![Average CPU Usage](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.cpu&alarm=10min_cpu_usage&refresh=auto&label=Average%20CPU%20Usage)
 ![System Uptime](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.uptime&label=System%20Uptime&refresh=10)\
-![Available Memory](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.ram&dimension=free&label=Available%20Memory&refresh=auto&values_color=gray:null|green%3C2000|orange%3C1000|red%3C500)
-![Sockets](https://dashboard.chilo.space/api/v1/badge.svg?chart=apps.sockets&label=Sockets&refresh=auto&value_color=grey:null|green%3C500|orange%3C1000|red)
+![Free Memory](https://dashboard.chilo.space/api/v1/badge.svg?chart=system.ram&dimension=free&label=Free%20Memory&refresh=auto&values_color=gray:null|green%3C2000|orange%3C1000|red%3C500)
+![Used Disk Space](https://dashboard.chilo.space/api/v1/badge.svg?chart=disk_space._&alarm=disk_space_usage&label=Used%20Disk%20Space&refresh=auto)
+
 ## Recording Usage
 [] = Optional\
 <> = needed\
