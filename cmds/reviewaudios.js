@@ -51,7 +51,7 @@ module.exports.run = async (client, message, args) => {
         }
     }
     await channel.send(`Finished for today. Reviewed a total of ${reviewed} Audios in this session`);
-    await channel.bulkDelete(messages);
+    await channel.bulkDelete(messages).catch(() => null);
     await conn.disconnect();
 };
 

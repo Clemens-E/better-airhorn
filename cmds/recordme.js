@@ -54,7 +54,7 @@ If you already voted, but this doesn't work, wait up to 5 Minutes.`)
         name = name.content;
         if (name === '/cancel' || name === undefined) {
             await channel.send('Canceling Command, Deleting Clip');
-            await channel.bulkDelete(messages);
+            await channel.bulkDelete(messages).catch(() => null);
             await fsp.unlink(`${client.AudioStorage.dirPath}/${fileName}`);
             return;
         }
@@ -107,7 +107,7 @@ ${ticks}`),
     collector.on('end', async () => {
         if (!options.privacyMode) {
             await channel.send('Canceling Command, Deleting Clip');
-            await channel.bulkDelete(messages);
+            await channel.bulkDelete(messages).catch(() => null);
             await fsp.unlink(`${client.AudioStorage.dirPath}/${fileName}`);
             return;
         }
@@ -117,7 +117,7 @@ ${ticks}`),
             await author.send(new Discord.MessageAttachment(`${client.AudioStorage.dirPath}/${fileName}`));
             await client.AudioStorage.deleteAudio(fileName);
         }
-        await channel.bulkDelete(messages);
+        await channel.bulkDelete(messages).catch(() => null);
     });
 };
 
