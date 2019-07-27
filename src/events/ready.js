@@ -17,7 +17,14 @@ module.exports = async (client) => {
     if (client.settings.has('lastMessage')) {
         const dat = client.settings.get('lastMessage');
         const msg = await client.channels.get(dat.channel).messages.fetch(dat.msg);
-        msg.edit(`\`\`\`css\n${dat.content}\`\`\`*restart completed*`);
+        const pg = client.dtl.newProgress([], msg);
+        console.log(dat);
+        pg.tasks = dat.tasks.map(x => {
+            x.done = true;
+            return x;
+        });
+        pg.currentIndex = dat.index;
+        pg.next();
         client.settings.delete('lastMessage');
     }
     writeFileSync(`${__dirname}/../storage/guildCount.json`, JSON.stringify({

@@ -18,6 +18,7 @@ const client = new Discord.Client({
     messageCacheLifetime: 60,
     messageSweepInterval: 61,
 });
+client.dtl = new (require('discord-message-tasks'))(config.empty, config.done);
 client.sentry = require('@sentry/node');
 client.config = config;
 client.dbl = new dbl(client.config.dbltoken);
