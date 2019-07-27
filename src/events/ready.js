@@ -18,7 +18,6 @@ module.exports = async (client) => {
         const dat = client.settings.get('lastMessage');
         const msg = await client.channels.get(dat.channel).messages.fetch(dat.msg);
         const pg = client.dtl.newProgress([], msg);
-        console.log(dat);
         pg.tasks = dat.tasks.map(x => {
             x.done = true;
             return x;
