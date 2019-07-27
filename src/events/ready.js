@@ -3,14 +3,14 @@ const {
     writeFileSync,
 } = require('fs');
 const pg = require('pg');
-const util = require('../modules/util.js');
+const util = require(`${__dirname}/../modules/util.js`);
 
 module.exports = async (client) => {
     client.ready = true;
     const pool = new pg.Pool({
         connectionString: client.config.psqllogin,
     });
-    client.AudioStorage = new (require('../modules/AudioStorage.js'))(pool, './recordedAudio', 40);
+    client.AudioStorage = new (require(`${__dirname}/../modules/AudioStorage.js`))(pool, `${__dirname}/../recordedAudio`, 40);
     client.voice.connections.forEach(e => e.leave().catch(() => null));
     client.dbl.postStats(client.guilds.size, undefined, client.guilds.first().shard.manager.totalShards);
     client.dblAPI = new util.dbl(client.config.voteurl, client.config.voteauth);
@@ -20,7 +20,7 @@ module.exports = async (client) => {
         msg.edit(`\`\`\`css\n${dat.content}\`\`\`*restart completed*`);
         client.settings.delete('lastMessage');
     }
-    writeFileSync('./storage/guildCount.json', JSON.stringify({
+    writeFileSync(`${__dirname}/../storage/guildCount.json`, JSON.stringify({
         size: client.guilds.size,
     }));
     let counter = 0;

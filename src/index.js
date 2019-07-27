@@ -2,10 +2,10 @@ const Discord = require('discord.js');
 const dbl = require('dblapi.js');
 const fs = require('fs');
 const $console = require('Console');
-const config = require('./config.json');
+const config = require(`${__dirname}/../config.json`);
 const Enmap = require('enmap');
 const http = require('http');
-const shardCount = (parseInt(JSON.parse(fs.readFileSync('./storage/guildCount.json')).size / 500, 10)) || 0;
+const shardCount = (parseInt(JSON.parse(fs.readFileSync(`${__dirname}/storage/guildCount.json`)).size / 500, 10)) || 0;
 const client = new Discord.Client({
     shardCount: shardCount !== 0 ? shardCount : 'auto',
     presence: {
@@ -38,12 +38,12 @@ process.on('unhandledRejection', error => {
 
 });
 
-fs.readdir('./events/', (err, files) => {
+fs.readdir(`${__dirname}/events/`, (err, files) => {
     let eventssize = 0;
     if (err) return $console.error(err);
     files.forEach(file => {
         eventssize++;
-        const event = require(`./events/${file}`);
+        const event = require(`${__dirname}/events/${file}`);
         const eventName = file.split('.')[0];
         client.on(eventName, event.bind(null, client));
     });
@@ -51,11 +51,11 @@ fs.readdir('./events/', (err, files) => {
 });
 
 client.commands = new Enmap();
-fs.readdir('./cmds/', (err, files) => {
+fs.readdir(`${__dirname}/cmds/`, (err, files) => {
     if (err) return console.error(err);
     files.forEach(file => {
         if (!file.endsWith('.js')) return;
-        const props = require(`./cmds/${file}`);
+        const props = require(`${__dirname}/cmds/${file}`);
         const commandName = file.split('.')[0];
         client.commands.set(commandName, props);
     });
