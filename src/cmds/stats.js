@@ -50,7 +50,7 @@ ${ticks}
             .addField('**> Host**', `
 ${ticks}js
 Event Loop Lag: ${lag().toFixed(2)} Milliseconds
-CPU: ${os.cpus().map(i => `${i.model}`)[0]}
+CPU:${os.cpus().length}x ${os.cpus()[0].model.replace(/ {2}/g, '')}
 Memory Usage: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB / ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB
 CPU Usage: ${percent.toFixed(2)}%
 Platform: ${os.platform}
