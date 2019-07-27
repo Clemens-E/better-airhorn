@@ -4,3 +4,4 @@ config.json
 recordedAudio/
 storage/
 .vscode/
+tmp/
