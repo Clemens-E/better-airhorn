@@ -9,7 +9,7 @@ module.exports.run = async (client, message) => {
 
     exec('git pull origin master').then(async r => {
         const stdout = r.stdout;
-        // if (['Already up to date.\n', 'Already up-to-date.\n'].includes(stdout)) return msg.edit(stdout);
+        if (['Already up to date.\n', 'Already up-to-date.\n'].includes(stdout)) return msg.edit(stdout);
         await msg.edit('found updates, deploying them.');
         const pg = client.dtl.newProgress(['pulled updates', 'updated dependencies', `${client.AudioStorage.tasks.length + 1} Tasks finished`, 'closing database connection', 'process restarted'], msg);
         client.shuttingDown = true;
