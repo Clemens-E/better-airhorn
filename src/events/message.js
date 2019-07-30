@@ -56,17 +56,20 @@ module.exports = async (client, message) => {
         }, 'usage', true);
         if (client.shuttingDown) return channel.send('client is shutting down, please try again later.');
 
-        cmd.run(client, message, args).catch(e => {
-            if (client.config.prod) client.sentry.captureException(e);
+        const prom = cmd.run(client, message, args);
+        if (prom instanceof Promise) {
+            prom.catch(e => {
+                if (client.config.prod) client.sentry.captureException(e);
 
-            channel.send(
-                new Discord.MessageEmbed()
-                .setTitle(`${client.config.crashed} ${cmd.help.name} Crashed`)
-                .setColor(client.config.ce)
-                .addField('Is this an Issue?', 'If the Problem consists please report it [here](https://discordapp.com/invite/5m7Xss3 \'Support Server\')')
-                .addField('Error', `\`\`\`js\n${e.message} \`\`\``)
-            );
-            console.error(e);
-        });
+                channel.send(
+                    new Discord.MessageEmbed()
+                    .setTitle(`${client.config.crashed} ${cmd.help.name} Crashed`)
+                    .setColor(client.config.ce)
+                    .addField('Is this an Issue?', 'If the Problem consists please report it [here](https://discordapp.com/invite/5m7Xss3 \'Support Server\')')
+                    .addField('Error', `\`\`\`js\n${e.message} \`\`\``)
+                );
+                console.error(e);
+            });
+        }
     }
 };
