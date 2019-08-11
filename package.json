@@ -1,55 +1,75 @@
 {
-  "name": "better-airhorn",
-  "version": "1.0.0",
-  "description": "Replacement for Airhorn Solutions because I really liked that bot.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/Clemens.E/better-airhorn.git"
-  },
-  "keywords": [
-    "discord",
-    "bot"
-  ],
-  "author": "Clemens Ertle",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/Clemens.E/better-airhorn/issues"
-  },
-  "homepage": "https://gitlab.com/Clemens.E/better-airhorn#README",
-  "dependencies": {
-    "@sentry/node": "^5.5.0",
-    "Console": "^1.1.0",
-    "better-sqlite-pool": "^0.1.2",
-    "bufferutil": "^4.0.1",
-    "cpu-stat": "^2.0.1",
-    "dblapi.js": "^2.3.0",
-    "discord-message-tasks": "^1.0.2",
-    "discord.js": "github:discordjs/discord.js",
-    "enmap": "^4.3.3",
-    "erlpack": "github:hammerandchisel/erlpack",
-    "event-loop-lag": "^1.4.0",
-    "get-folder-size": "^2.0.1",
-    "moment": "^2.24.0",
-    "moment-duration-format": "^2.2.2",
-    "node-fetch": "^2.6.0",
-    "node-lame": "^1.2.0",
-    "node-opus": "^0.3.2",
-    "opus": "0.0.0",
-    "pg": "^7.12.0",
-    "shortid": "^2.2.14",
-    "snyk": "^1.199.2"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "storage/*"
-    ]
-  },
-  "snyk": true
+    "name": "better-airhorn",
+    "version": "2.0.0",
+    "description": "Replacement for Airhorn Solutions because I really liked that bot.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "ts-node ./src/index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/Clemens.E/better-airhorn.git"
+    },
+    "keywords": [
+        "discord",
+        "airhorn",
+        "record audio"
+    ],
+    "author": "Clemens Ertle",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/Clemens.E/better-airhorn/issues"
+    },
+    "homepage": "https://gitlab.com/Clemens.E/better-airhorn#README",
+    "dependencies": {
+        "@sentry/node": "^5.6.1",
+        "@types/eslint": "^4.16.6",
+        "@types/get-folder-size": "^2.0.0",
+        "@types/node-fetch": "^2.5.0",
+        "@types/pg": "^7.4.14",
+        "@typescript-eslint/eslint-plugin": "^1.13.0",
+        "@typescript-eslint/parser": "^1.13.0",
+        "@typescript-eslint/typescript-estree": "^1.13.0",
+        "better-sqlite-pool": "^0.1.2",
+        "bufferutil": "^4.0.1",
+        "chance": "^1.0.18",
+        "cuid": "^2.1.6",
+        "dblapi.js": "^2.3.0",
+        "discord-message-tasks": "^1.0.2",
+        "discord.js": "github:discordjs/discord.js",
+        "dotenv": "^8.0.0",
+        "enmap": "^4.8.7",
+        "eslint": "^6.1.0",
+        "ffmpeg-binaries": "^4.0.0",
+        "ffmpeg-static": "^2.5.0",
+        "filesize-parser": "^1.5.0",
+        "get-folder-size": "^2.0.1",
+        "node-fetch": "^2.6.0",
+        "node-lame": "^1.2.0",
+        "node-opus": "^0.3.2",
+        "opus": "0.0.0",
+        "pg": "^7.12.0",
+        "readdirp": "^3.1.1",
+        "shortid": "^2.2.14",
+        "snyk": "^1.199.2",
+        "typescript": "^3.5.3",
+        "zlib-sync": "^0.1.5",
+        "zucc": "^0.1.2"
+    },
+    "nodemonConfig": {
+        "ignore": [
+            "**/*.test.ts",
+            "**/*.spec.ts",
+            ".git",
+            "node_modules"
+        ],
+        "watch": [
+            "src"
+        ],
+        "exec": "npm start",
+        "ext": "ts"
+    },
+    "snyk": true,
+    "devDependencies": {}
 }

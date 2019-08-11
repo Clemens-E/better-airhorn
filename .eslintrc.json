@@ -1,14 +1,17 @@
 {
-    "extends": "eslint:recommended",
+    "parser": "@typescript-eslint/parser",
+    "extends": ["plugin:@typescript-eslint/recommended"],
     "env": {
         "node": true,
         "es6": true,
         "browser": true
     },
     "parserOptions": {
-        "ecmaVersion": 2017
+        "ecmaVersion": 2017,
+        "sourceType": "module"
     },
     "rules": {
+        "@typescript-eslint/no-explicit-any": 0,
         "brace-style": ["error", "1tbs", {
             "allowSingleLine": true
         }],
