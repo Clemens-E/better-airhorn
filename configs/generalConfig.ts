@@ -29,6 +29,7 @@ interface Audio {
     storage: string;
     maxRecordTime: number;
     maxFileSize: number;
+    maxFolderSize: number;
 }
 
 //* ~~~~~~~~~~~ General Settings ~~~~~~~~~~ //

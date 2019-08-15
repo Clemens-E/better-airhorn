@@ -1,9 +1,11 @@
-require('dotenv').config()
-import { Config } from '../configs/generalConfig';
-const config: Config = require('../configs/config.js');
+require('dotenv').config();
 import Discord from 'discord.js';
-import { BClient } from './struct/client';
 import readdir from 'readdirp';
+
+import { Config } from '../configs/generalConfig';
+import { BClient } from './struct/client';
+
+const config: Config = require('../configs/config.js');
 
 (async (): Promise<void> => {
     const client = new BClient({
@@ -42,4 +44,7 @@ import readdir from 'readdirp';
         })
 
     client.login(process.env.BTOKEN);
+
+    // this has to be down here because it Wraps Promises, this interferes with enmaps type checking
+    require('appmetrics-dash').monitor({ port: 8000, console: { log: (): void => null } });
 })();

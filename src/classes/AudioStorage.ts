@@ -1,14 +1,14 @@
-import { Lame } from 'node-lame';
-import { promises as fsp } from 'fs';
-import { Task } from '../struct/Task';
-import { AudioCommand } from '../struct/AudioCommand';
-import { VoiceConnection, User } from 'discord.js';
-import { promisify } from 'util';
-import { Config } from '../../configs/generalConfig';
-import fs from 'fs';
 import id from 'cuid';
-import pg from 'pg';
+import { User, VoiceConnection } from 'discord.js';
+import fs from 'fs';
 import getSize from 'get-folder-size';
+import { Lame } from 'node-lame';
+import pg from 'pg';
+import { promisify } from 'util';
+
+import { Config } from '../../configs/generalConfig';
+import AudioCommand from '../struct/AudioCommand';
+import Task from '../struct/Task';
 
 const config: Config = require('../../configs/config.js');
 
@@ -40,7 +40,7 @@ export default class AudioStorage {
         this.maxDirSize = maxSize;
         this.scanInterval = scanInterval;
         this.pool = pool;
-
+        this.dir = dir;
         this.tasks = [];
         this.interval = true;
         this.acceptNewTasks = true;
@@ -79,7 +79,7 @@ export default class AudioStorage {
      * @returns {Promise<AudioCommand[]>}
      * @memberof AudioStorage
      */
-    public async getAudioList(): Promise<AudioCommand[]> {
+    public async fetchAudioList(): Promise<AudioCommand[]> {
         return (await this.pool.query('SELECT * FROM files')).rows;
     }
 
@@ -123,17 +123,6 @@ export default class AudioStorage {
     }
 
     /**
-     *Returns information about a AudioCommand, including privacymode, commandname, user, guild and filename.
-     *
-     * @param {string} commandName
-     * @returns
-     * @memberof AudioStorage
-     */
-    public async getAudioInfo(commandName: string): Promise<AudioCommand> {
-        return (await this.pool.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
-    }
-
-    /**
      *Checks if a file exists and returns a {exists: boolean, birthtime:number}
      *
      * @param {string} path
@@ -142,10 +131,10 @@ export default class AudioStorage {
      */
     async fileExists(path: string): Promise<any> {
         const o = {
-            exists: (await fsp.access(path).catch(() => false)) === undefined ? true : false,
+            exists: (await fs.promises.access(path).catch(() => false)) === undefined ? true : false,
             birthtime: 0,
         };
-        if (o.exists) o.birthtime = (await fsp.stat(path)).birthtimeMs;
+        if (o.exists) o.birthtime = (await fs.promises.stat(path)).birthtimeMs;
         return o;
     }
 
@@ -262,9 +251,9 @@ export default class AudioStorage {
         const taskID = this.addTask();
         if (deleteFile) {
             const path = `${this.dir}/${fileName}`;
-            const exists = (await fsp.access(path).catch(() => false)) === undefined ? true : false;
+            const exists = (await fs.promises.access(path).catch(() => false)) === undefined ? true : false;
             if (!exists) throw new Error(`${fileName} does not exists`);
-            await fsp.unlink(path);
+            await fs.promises.unlink(path);
         }
         await this.pool.query('DELETE FROM files WHERE fileName = $1', [fileName]);
         this.removeTask(taskID);
@@ -278,7 +267,7 @@ export default class AudioStorage {
      * @memberof AudioStorage
      * @async
      */
-    async getAudioCommand(commandName: string): Promise<AudioCommand> {
+    async fetchAudio(commandName: string): Promise<AudioCommand> {
         return (await this.pool.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
     }
 
@@ -347,7 +336,7 @@ export default class AudioStorage {
                     raw: true,
                 }).setFile(tmpPath);
                 await encoder.encode();
-                await fsp.unlink(tmpPath);
+                await fs.promises.unlink(tmpPath);
                 res(outputPath);
                 this.removeTask(taskID);
             });

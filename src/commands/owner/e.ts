@@ -1,7 +1,9 @@
+import { Message, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
-import Command from '../../struct/command';
-import { Message, VoiceConnection, Channel } from 'discord.js';
+import { postText } from '../../classes/textHandler';
+
 import { BClient } from '../../struct/client';
+import Command from '../../struct/command';
 
 export default class Eval extends Command {
 
@@ -25,12 +27,14 @@ export default class Eval extends Command {
     }
 
     async exec(client: BClient, message: Message, args: string[], voice?: VoiceConnection): Promise<any> {
-        if (message.author.id === client.config.general.ownerID) return message.channel.send(await this.asOwner(client, args.join(' ')));
-        else return message.channel.send(await this.asGuest(args.join(' ')));
+        message.channel.send(message.author.id === client.config.general.ownerID ?
+            await this.asOwner(client, args.join(' '), message)
+            : await this.asGuest(client, args.join(' '))
+        );
     }
 
 
-    async asOwner(client: BClient, code: string) {
+    async asOwner(client: BClient, code: string, message: Message) {
         let evaled;
         try {
             evaled = eval(code);
@@ -38,27 +42,29 @@ export default class Eval extends Command {
         catch (err) {
             evaled = err.message;
         }
-        evaled = await this.clean(client, evaled);
-        return evaled;
+        return await this.clean(evaled);
     }
 
-    async asGuest(code: string) {
-
+    async asGuest(client: BClient, code: string) {
+        const res = await (await fetch('https://run.glot.io/languages/javascript/latest', {
+            method: 'POST',
+            headers: {
+                Authorization: 'Token ' + process.env.GLOTTOKEN,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                'files': [{
+                    'name': 'index.js',
+                    'content': code,
+                }],
+            }),
+        })).json();
+        if (res.message) return await this.clean(res.message);
+        if (!!res.stderr && res.stderr.length > 0) return await this.clean(res.stderr);
+        return await this.clean(res.stdout);
     }
 
-    async postText(output: string): Promise<string> {
-        const res = await (await fetch('https://txtupload.cf/api/upload',
-            {
-                method: 'POST',
-                body: output,
-                headers: {
-                    'Content-Type': 'text/plain'
-                }
-            })).json();
-        return `https://txtupload.cf/${res.hash}#${res.key}`;
-    }
-
-    async clean(client: BClient, text: string): Promise<string> {
+    async clean(text: string): Promise<string> {
         if (text && text.constructor.name == 'Promise') {
             text = await text;
         }
@@ -71,11 +77,11 @@ export default class Eval extends Command {
         text = text
             .replace(/`/g, '`' + String.fromCharCode(8203))
             .replace(/@/g, '@' + String.fromCharCode(8203))
-            .replace(client.token, '// ---------- NO ---------- //')
+            .replace(process.env.BTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.GLOTTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.DBLTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.PSQL, '// ---------- NO ---------- //');
-        if (text.length > 1500) return await this.postText(text);
+        if (text.length > 1500) return await postText(text);
         else return `\`\`\`xl\n${text}\n\`\`\``;
     }
 }

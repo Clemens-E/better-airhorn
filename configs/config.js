@@ -15,6 +15,7 @@ module.exports = {
         storage: path.normalize(`${__dirname}/../storage`),
         maxRecordTime: 20,
         maxFileSize: sizeParser('50MB'),
+        maxFolderSize: sizeParser('100GB'),
     },
 
     emojis: {
