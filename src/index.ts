@@ -2,10 +2,8 @@ require('dotenv').config();
 import Discord from 'discord.js';
 import readdir from 'readdirp';
 
-import { Config } from '../configs/generalConfig';
 import { BClient } from './struct/client';
 
-const config: Config = require('../configs/config.js');
 
 (async (): Promise<void> => {
     const client = new BClient({
@@ -22,26 +20,26 @@ const config: Config = require('../configs/config.js');
     });
 
     readdir(`${__dirname}/commands/`, {
-        fileFilter: '*.ts'
+        fileFilter: '*.ts',
     })
-        .on('data', (e: any) => {
+        .on('data', (e: any): void => {
             client.commands.set(e.basename.split('.')[0], new (require(e.fullPath).default)(client));
         })
-        .on('end', () => {
+        .on('end', (): void => {
             console.log(`loaded ${client.commands.size} commands`);
-        })
+        });
 
     let events = 0;
     readdir(`${__dirname}/events/`, {
-        fileFilter: '*.ts'
+        fileFilter: '*.ts',
     })
-        .on('data', (e: any) => {
+        .on('data', (e: any): void => {
             client.on(e.basename.split('.')[0], require(e.fullPath).bind(null, client));
             events++;
         })
-        .on('end', () => {
+        .on('end', (): void => {
             console.log(`loaded ${events} events`);
-        })
+        });
 
     client.login(process.env.BTOKEN);
 

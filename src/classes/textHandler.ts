@@ -4,8 +4,8 @@ export async function postText(output: string): Promise<string> {
             method: 'POST',
             body: output,
             headers: {
-                'Content-Type': 'text/plain'
-            }
+                'Content-Type': 'text/plain',
+            },
         })).json();
     return `https://txtupload.cf/${res.hash}#${res.key}`;
 }
