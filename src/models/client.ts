@@ -6,6 +6,7 @@ import enmap from 'enmap';
 import Sentry from '@sentry/node';
 import AudioStorage from '../classes/AudioStorage';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config.js');
 
 export class BClient extends Client {
@@ -21,12 +22,12 @@ export class BClient extends Client {
     public pg: Pool;
     public AudioStorage: AudioStorage;
 
-    constructor(opts: ClientOptions) {
+    public constructor(opts: ClientOptions) {
         super(opts);
         this.pg = new Pool({
             connectionString: process.env.PSQL,
         });
-        this.AudioStorage = new AudioStorage(this.pg, config.audio.storage, config.audio.maxFolderSize, 60 * 1000);
+        this.AudioStorage = new AudioStorage(this.pg, config.audio.storage);
         this.commands = new Map<string, Command>();
         this.config = config;
         this.sentry = Sentry;
@@ -34,7 +35,7 @@ export class BClient extends Client {
         if (process.env.NODE_ENV === 'production') this.sentry.init({ dsn: process.env.SENTRYURL });
         else console.warn('process is not running in production');
         this.dtl = new (require('discord-message-tasks'))(config.emojis.empty, config.emojis.done);
-        this.once('ready', () => this.ready = true);
+        this.once('ready', (): boolean => this.ready = true);
         this.settings = new enmap({ name: 'settings' });
         this.usage = new enmap({ name: 'usage' });
         this.messagesPerSecond = 0;
@@ -44,42 +45,42 @@ export class BClient extends Client {
 export class BMessage extends Message {
     public flags: string[];
 
-    constructor(client: Client, data: object, channel: TextChannel) {
+    public constructor(client: Client, data: object, channel: TextChannel) {
         super(client, data, channel);
         this.flags = [];
     }
 
-    public error(description: string, footer?: string) {
+    public error(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
         embed.setColor(config.colors.error);
-        this.channel.send(embed);
+        return this.channel.send(embed);
     }
-    public success(description: string, footer?: string) {
+    public success(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
         embed.setColor(config.colors.success);
-        this.channel.send(embed);
+        return this.channel.send(embed);
     }
-    public warn(description: string, footer?: string) {
+    public warn(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
         embed.setColor(config.colors.warn);
-        this.channel.send(embed);
+        return this.channel.send(embed);
     }
-    public neutral(description: string, footer?: string) {
+    public neutral(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
         embed.setColor(config.colors.neutral);
-        this.channel.send(embed);
+        return this.channel.send(embed);
     }
 
 }
 
-Structures.extend('Message', (Message) => {
+Structures.extend('Message', (): any => {
     return BMessage;
 });
