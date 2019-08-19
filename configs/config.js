@@ -30,5 +30,6 @@ module.exports = {
         ownerID: '196214245770133504',
         prefix: '$',
         voteURL: 'https://webhooks.chilo.space/better-airhorn',
+        subTasks: path.normalize(`${__dirname}/../src/Subtasks`),
     },
 };

@@ -3,12 +3,12 @@
     "extends": ["plugin:@typescript-eslint/recommended"],
     "env": {
         "node": true,
-        "es6": true,
-        "browser": true
+        "es6": true
     },
     "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
+        "ecmaVersion": 2019,
+        "sourceType": "module",
+        "module": "commonjs"
     },
     "rules": {
         "@typescript-eslint/no-explicit-any": 0,

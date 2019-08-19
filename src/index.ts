@@ -2,7 +2,7 @@ require('dotenv').config();
 import Discord from 'discord.js';
 import readdir from 'readdirp';
 
-import { BClient } from './struct/client';
+import { BClient } from './models/client';
 
 
 (async (): Promise<void> => {

@@ -37,4 +37,5 @@ interface General {
     ownerID: string;
     prefix: string;
     voteURL: string;
+    subTasks: string;
 }

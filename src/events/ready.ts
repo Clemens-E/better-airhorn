@@ -1,5 +1,5 @@
-import { BClient } from "../struct/client";
+import { BClient } from '../models/client';
 
-module.exports = (client: BClient) => {
+module.exports = (client: BClient): void => {
     console.log(`ready as ${client.user.tag}`);
-}
+};

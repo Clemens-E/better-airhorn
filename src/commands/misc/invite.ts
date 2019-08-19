@@ -1,12 +1,10 @@
-import { VoiceConnection } from 'discord.js';
-
-import { BClient, BMessage } from '../../struct/client';
-import Command from '../../struct/command';
+import { BClient, BMessage } from '../../models/client';
+import Command from '../../models/command';
 
 export default class Eval extends Command {
-    private readonly denyMessage = `Missing permissions to this Audio`;
+    private readonly denyMessage = 'Missing permissions to this Audio';
 
-    constructor(client: BClient) {
+    public constructor(client: BClient) {
         super(client,
             {
                 name: 'invite',
@@ -25,8 +23,8 @@ export default class Eval extends Command {
             });
     }
 
-    async exec(client: BClient, message: BMessage, args: string[], voice?: VoiceConnection): Promise<any> {
-        message.neutral(`Invite me with [this link](${await client.generateInvite(36703232)} 'Invite me!')`, 'Thank you for inviting me!');
+    public async exec(client: BClient, message: BMessage): Promise<any> {
+        return message.neutral(`Invite me with [this link](${await client.generateInvite(36703232)} 'Invite me!')`, 'Thank you for inviting me!');
     }
 }
 

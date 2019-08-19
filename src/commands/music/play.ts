@@ -1,12 +1,12 @@
 import { VoiceConnection } from 'discord.js';
 
-import { BClient, BMessage } from '../../struct/client';
-import Command from '../../struct/command';
+import { BClient, BMessage } from '../../models/client';
+import Command from '../../models/command';
 
 export default class Eval extends Command {
-    private readonly denyMessage = `Missing permissions to this Audio`;
+    private readonly denyMessage = 'Missing permissions to this Audio';
 
-    constructor(client: BClient) {
+    public constructor(client: BClient) {
         super(client,
             {
                 name: 'play',
@@ -25,7 +25,7 @@ export default class Eval extends Command {
             });
     }
 
-    async exec(client: BClient, message: BMessage, args: string[], voice: VoiceConnection): Promise<any> {
+    public async exec(client: BClient, message: BMessage, args: string[], voice: VoiceConnection): Promise<any> {
         const { author, guild } = message;
 
         const cmd = await client.AudioStorage.fetchAudio(args[0]);
@@ -42,7 +42,7 @@ export default class Eval extends Command {
                 throw new Error(`This should **never** happen, if this persists please report it in the support server.
     DEBUG INFO: Privacy Mode=${cmd.privacymode}`);
         }
-        await client.AudioStorage.playAudio(voice, cmd.commandname);
+        await client.AudioStorage.play(voice, cmd.commandname);
         message.success(`finished playing \`${cmd.commandname}\``);
         voice.disconnect();
 

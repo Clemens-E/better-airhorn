@@ -1,13 +1,14 @@
 import { Message, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
-import { postText } from '../../classes/textHandler';
 
-import { BClient } from '../../struct/client';
-import Command from '../../struct/command';
+import { postText } from '../../classes/TextHandler';
+import { BClient, BMessage } from '../../models/client';
+import Command from '../../models/command';
+
 
 export default class Eval extends Command {
 
-    constructor(client: BClient) {
+    public constructor(client: BClient) {
         super(client,
             {
                 name: 'e',
@@ -26,26 +27,27 @@ export default class Eval extends Command {
             });
     }
 
-    async exec(client: BClient, message: Message, args: string[], voice?: VoiceConnection): Promise<any> {
+    public async exec(client: BClient, message: BMessage, args: string[]): Promise<any> {
         message.channel.send(message.author.id === client.config.general.ownerID ?
-            await this.asOwner(client, args.join(' '), message)
+            await this.asOwner(client, message, args.join(' '))
             : await this.asGuest(client, args.join(' '))
         );
     }
 
 
-    async asOwner(client: BClient, code: string, message: Message) {
+    private async asOwner(client: BClient, message: BMessage, code: string): Promise<string> {
         let evaled;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { channel, guild, author } = message;
         try {
             evaled = eval(code);
-        }
-        catch (err) {
+        } catch (err) {
             evaled = err.message;
         }
         return await this.clean(evaled);
     }
 
-    async asGuest(client: BClient, code: string) {
+    private async asGuest(client: BClient, code: string): Promise<string> {
         const res = await (await fetch('https://run.glot.io/languages/javascript/latest', {
             method: 'POST',
             headers: {
@@ -64,8 +66,8 @@ export default class Eval extends Command {
         return await this.clean(res.stdout);
     }
 
-    async clean(text: string): Promise<string> {
-        if (text && text.constructor.name == 'Promise') {
+    public async clean(text: string): Promise<string> {
+        if (text && text.constructor.name == 'Promise' || text.constructor.name == 'WrappedPromise') {
             text = await text;
         }
         if (typeof text !== 'string') {
