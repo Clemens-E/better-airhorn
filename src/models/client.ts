@@ -5,6 +5,7 @@ import Command from './command';
 import enmap from 'enmap';
 import Sentry from '@sentry/node';
 import AudioStorage from '../classes/AudioStorage';
+import MessageTaskList from 'discord-message-tasks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config.js');
@@ -21,6 +22,7 @@ export class BClient extends Client {
     public messageCount: number;
     public pg: Pool;
     public AudioStorage: AudioStorage;
+    public taskList: MessageTaskList;
 
     public constructor(opts: ClientOptions) {
         super(opts);
@@ -39,6 +41,7 @@ export class BClient extends Client {
         this.settings = new enmap({ name: 'settings' });
         this.usage = new enmap({ name: 'usage' });
         this.messagesPerSecond = 0;
+        this.taskList = new MessageTaskList(config.emojis.loading, config.emojis.done);
     }
 }
 
