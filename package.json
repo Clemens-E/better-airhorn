@@ -30,7 +30,7 @@
     "bufferutil": "^4.0.1",
     "cpu-stat": "^2.0.1",
     "dblapi.js": "^2.3.0",
-    "discord-message-tasks": "^1.0.2",
+    "discord-message-tasks": "^1.0.5",
     "discord.js": "github:discordjs/discord.js",
     "enmap": "^4.3.3",
     "erlpack": "github:hammerandchisel/erlpack",
