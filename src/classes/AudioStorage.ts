@@ -76,7 +76,7 @@ export default class AudioStorage extends TaskHandler {
         const taskID = this.addTask();
         if (!await this.nameExists(commandName)) throw new Error('command does not exist');
         const file = ((await this.pool.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename;
-        return await this.mp3.readStream(connection, file);
+        return this.mp3.readStream(connection, file);
     }
 
     /**
