@@ -47,7 +47,7 @@ export default class IPCChildConnector {
 
     protected async send(data: any): Promise<any> {
         if (!this.connected) await this.connect();
-        return await this.client.sendTo(this.serverLabel, data);
+        return this.client.sendTo(this.serverLabel, data);
     }
 
     public async ping(): Promise<number> {

@@ -25,7 +25,7 @@ async function hasVoted(userID: string): Promise<boolean> {
     const res = await fetch(`${config.general.voteURL}/hasVoted`, {
         headers: { authorization: process.env.DBLSECRET, 'userid': userID },
     });
-    return await res.json();
+    return res.json();
 }
 module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     messages++;

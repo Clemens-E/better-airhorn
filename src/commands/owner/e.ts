@@ -44,7 +44,7 @@ export default class Eval extends Command {
         } catch (err) {
             evaled = err.message;
         }
-        return await this.clean(evaled);
+        return this.clean(evaled);
     }
 
     private async asGuest(client: BClient, code: string): Promise<string> {
@@ -61,9 +61,9 @@ export default class Eval extends Command {
                 }],
             }),
         })).json();
-        if (res.message) return await this.clean(res.message);
-        if (!!res.stderr && res.stderr.length > 0) return await this.clean(res.stderr);
-        return await this.clean(res.stdout);
+        if (res.message) return this.clean(res.message);
+        if (!!res.stderr && res.stderr.length > 0) return this.clean(res.stderr);
+        return this.clean(res.stdout);
     }
 
     public async clean(text: string): Promise<string> {
@@ -83,7 +83,7 @@ export default class Eval extends Command {
             .replace(process.env.GLOTTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.DBLTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.PSQL, '// ---------- NO ---------- //');
-        if (text.length > 1500) return await postText(text);
+        if (text.length > 1500) return postText(text);
         else return `\`\`\`xl\n${text}\n\`\`\``;
     }
 }
