@@ -27,6 +27,7 @@ interface Emojis {
 interface Audio {
     bitrate: 192 | 224 | 256 | 320;
     storage: string;
+    musicFolder: string;
     maxRecordTime: number;
     maxFileSize: number;
     maxFolderSize: number;

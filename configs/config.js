@@ -13,6 +13,7 @@ module.exports = {
     audio: {
         bitrate: 320,
         storage: path.normalize(`${__dirname}/../storage`),
+        musicFolder: path.normalize(`${__dirname}/music`),
         maxRecordTime: 20,
         maxFileSize: sizeParser('50MB'),
         maxFolderSize: sizeParser('100GB'),
