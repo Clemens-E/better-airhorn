@@ -45,7 +45,7 @@
         "cuid": "^2.1.6",
         "dblapi.js": "^2.3.0",
         "discord-message-tasks": "^1.0.5",
-        "discord.js": "github:discordjs/discord.js",
+        "discord.js": "github:vladfrangu/discOwOd.js#sharding-cleanup",
         "dotenv": "^8.0.0",
         "enmap": "^5.1.2",
         "eslint": "^6.2.2",
@@ -62,8 +62,7 @@
         "string-similarity": "^3.0.0",
         "typescript": "^3.6.2",
         "veza": "^1.0.0",
-        "zlib-sync": "^0.1.5",
-        "zucc": "^0.1.2"
+        "zlib-sync": "^0.1.5"
     },
     "nodemonConfig": {
         "ignore": [

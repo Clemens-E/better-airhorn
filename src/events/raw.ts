@@ -1,27 +1,45 @@
 import { BClient } from '../models/client';
-import { TextChannel } from 'discord.js';
+import { TextChannel, Guild } from 'discord.js';
+import Discord from 'discord.js';
 
-module.exports = (client: BClient, packet: any): void => {
+
+module.exports = async (client: BClient, event: any): Promise<void> => {
     // * Only need those two events.
-    if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(packet.t)) return;
+    if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(event.t)) return;
 
-    const channel = client.channels.get(packet.d.channel_id) as TextChannel;
-    if (channel.messages.has(packet.d.message_id)) return;
+    const {
+        d: data,
+    } = event;
+    const user = client.users.get(data.user_id);
+    const channel = client.channels.get(data.channel_id) as TextChannel || await user.createDM();
+    let message = channel.messages.get(data.message_id);
 
-    channel.messages.fetch(packet.d.message_id).then(message => {
-        const emoji = packet.d.emoji.id ? `${packet.d.emoji.name}:${packet.d.emoji.id}` : packet.d.emoji.name;
+    const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
 
-        // ! WILL REJECT EVERY EVENT THAT IS FOR OTHER EMOJIS
-        // TODO: EXTEND REACTION COLLECTOR AND REMOVE THIS CRAP
-        if (['👍', '👎'].includes(emoji)) return;
+    // ! WILL REJECT EVERY EVENT THAT IS FOR OTHER EMOJIS
+    // TODO: EXTEND REACTION COLLECTOR AND REMOVE THIS CRAP
+    if (['👍', '👎'].includes(emojiKey)) return;
 
-        const reaction = message.reactions.get(emoji);
-        if (reaction) reaction.users.set(packet.d.user_id, client.users.get(packet.d.user_id));
-        if (packet.t === 'MESSAGE_REACTION_ADD') {
-            client.emit('messageReactionAdd', reaction, client.users.get(packet.d.user_id));
-        }
-        if (packet.t === 'MESSAGE_REACTION_REMOVE') {
-            client.emit('messageReactionRemove', reaction, client.users.get(packet.d.user_id));
-        }
-    });
+    if (event.t === 'MESSAGE_REACTION_REMOVE' && message && message.reactions.get(emojiKey) && message.reactions.get(emojiKey).users.size) return;
+    if (event.t === 'MESSAGE_REACTION_ADD' && message) return;
+
+
+    if (!message) {
+        message = await channel.messages.fetch(data.message_id).catch(() => null);
+    }
+    if (!message) return;
+    if (!message.reactions) return;
+    let reaction = message.reactions.get(emojiKey);
+
+    if (!reaction) {
+        const emoji = new Discord.Emoji(client, data.emoji);
+        reaction = new Discord.MessageReaction(client, emoji, message);
+    }
+
+    if (event.t === 'MESSAGE_REACTION_ADD') {
+        client.emit('messageReactionAdd', reaction, user);
+    }
+    if (event.t === 'MESSAGE_REACTION_REMOVE') {
+        client.emit('messageReactionRemove', reaction, user);
+    }
 };
