@@ -1,9 +1,9 @@
-import { VoiceConnection } from 'discord.js';
+import { VoiceConnection, ReactionEmoji } from 'discord.js';
 
 import { BClient, BMessage } from '../../models/client';
 import Command from '../../models/command';
 
-export default class Eval extends Command {
+export default class Play extends Command {
     private readonly denyMessage = 'Missing permissions to this Audio';
 
     public constructor(client: BClient) {
@@ -29,6 +29,8 @@ export default class Eval extends Command {
         const { author, guild } = message;
 
         const cmd = await client.AudioStorage.fetchAudio(args[0]);
+        if (!cmd) return message.error('I can\'t find such audio');
+
         switch (cmd.privacymode) {
             case 1:
                 if (author.id !== cmd.user) return message.warn(this.denyMessage);
@@ -43,8 +45,28 @@ export default class Eval extends Command {
     DEBUG INFO: Privacy Mode=${cmd.privacymode}`);
         }
         await client.AudioStorage.play(voice, cmd.commandname);
-        message.success(`finished playing \`${cmd.commandname}\``);
         voice.disconnect();
+        const msg = await message.success(`finished playing \`${cmd.commandname}\``, 'react with 👍/👎 to upvote/downvote this audio');
+        msg.createReactionCollector((r, u) => !u.bot && (r.emoji.name === '👍' || r.emoji.name === '👎'),
+            { time: 20 * 1000 })
+
+            .on('end', () =>
+                msg.reactions.removeAll()
+            )
+            .on('collect', (r) => {
+                if (r.emoji.name === '👍') {
+                    client.AudioStorage.upvote(r.users.last().id, cmd.commandname)
+                        .then(() => message.success(`upvoted \`${cmd.commandname}\` 👍`))
+                        .catch(() => null);
+                } else {
+                    client.AudioStorage.downvote(r.users.last().id, cmd.commandname)
+                        .then(() => message.success(`downvoted \`${cmd.commandname}\` 👎`))
+                        .catch(() => null);
+                }
+            });
+        await msg.react('👍');
+        await msg.react('👎');
+
 
         // TODO: add vote system
         /*

@@ -15,7 +15,7 @@ import { BClient } from './models/client';
             },
         },
         messageCacheLifetime: 60,
-        messageSweepInterval: 61,
+        messageSweepInterval: 20,
         messageCacheMaxSize: 20,
     });
 

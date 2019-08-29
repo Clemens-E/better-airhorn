@@ -33,13 +33,13 @@ export default class AudioStorage extends TaskHandler {
      *Will reject new Tasks and wait until all Tasks finished.
      *It will force a shutdown after 10 Seconds
      *
-     * @returns {Promise<boolean>}
+     * @returns {Promise<void>}
      * @memberof AudioStorage
      */
-    public async shutdown(): Promise<boolean> {
-        const force = await this.drainTasks();
+    public async shutdown(): Promise<void> {
+        await this.drainTasks();
+        await this.mp3.shutdown();
         await this.pool.end();
-        return force;
     }
 
     /**
@@ -48,7 +48,7 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<AudioCommand[]>}
      * @memberof AudioStorage
      */
-    public async fetchAudioList(): Promise<AudioCommand[]> {
+    public async fetchAudios(): Promise<AudioCommand[]> {
         return (await this.pool.query('SELECT * FROM files')).rows;
     }
 
@@ -60,7 +60,7 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<void>}
      * @memberof AudioStorage
      */
-    public async review(commandName: string, value: boolean = true): Promise<void> {
+    public async review(commandName: string, value = true): Promise<void> {
         await this.pool.query('UPDATE files SET reviewed = $1 WHERE commandName = $2 ', [value, commandName]);
     }
 
@@ -76,7 +76,8 @@ export default class AudioStorage extends TaskHandler {
         const taskID = this.addTask();
         if (!await this.nameExists(commandName)) throw new Error('command does not exist');
         const file = ((await this.pool.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename;
-        return this.mp3.readStream(connection, file);
+        await this.mp3.readStream(connection, file);
+        this.removeTask(taskID);
     }
 
     /**
@@ -102,10 +103,10 @@ export default class AudioStorage extends TaskHandler {
      * @memberof AudioStorage
      * @async
      */
-    public async addAudio(user: any, guild: any, options: { privacyMode: 0 | 1 | 2 | 3; commandName: string; fileName: any }): Promise<string> {
+    public async addAudio(command: AudioCommand): Promise<string> {
         const taskID = this.addTask();
         const r = (await this.pool.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
-            [options.commandName, options.fileName, options.privacyMode, guild, user])).rows[0].name;
+            [command.commandname, command.filename, command.privacymode, command.guild, command.user])).rows[0].name;
         this.removeTask(taskID);
         return r;
     }
@@ -118,13 +119,21 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<void>}
      * @memberof AudioStorage
      */
-    public async deleteAudio(fileName: string, deleteFile: boolean = true): Promise<void> {
+    public async deleteAudio(fileName: string, deleteFile = true): Promise<void> {
         const taskID = this.addTask();
         if (deleteFile) {
             await this.mp3.delete(fileName);
         }
         await this.pool.query('DELETE FROM files WHERE fileName = $1', [fileName]);
         this.removeTask(taskID);
+    }
+
+    public async upvote(user: string, commandName: string): Promise<void> {
+        await this.pool.query('INSERT INTO votes("user", command, time, upvote) VALUES($1, $2, $3, $4)', [user, commandName, Date.now(), true]);
+    }
+
+    public async downvote(user: string, commandName: string): Promise<void> {
+        await this.pool.query('INSERT INTO votes("user", command, time, upvote) VALUES($1, $2, $3, $4)', [user, commandName, Date.now(), false]);
     }
 
     /**
@@ -168,19 +177,17 @@ export default class AudioStorage extends TaskHandler {
      * @param {User} author The User to record the Audio from
      * @param {VoiceConnection} conn The Discord Connection to a voiceChannel
      * @param {Number} timeout After what time to stop the recording.
-     * @returns {Promise} returns the path if anything worked well.
+     * @returns {Promise} returns the path if everything worked well.
      */
-    public record(author: User, conn: VoiceConnection, timeout: number): Promise<void> {
+    public async record(author: User, conn: VoiceConnection, timeout: number): Promise<string> {
         const taskID = this.addTask();
-        return new Promise((res): void => {
-            const stream = conn.receiver.createStream(author, {
-                end: 'manual',
-                mode: 'pcm',
-            });
-            this.mp3.writeStream(stream, timeout).then((): void => {
-                this.removeTask(taskID);
-                res();
-            });
+        const stream = conn.receiver.createStream(author, {
+            end: 'manual',
+            mode: 'pcm',
         });
+        setTimeout((): void => stream.destroy(), timeout);
+        const res = await this.mp3.savePCM(stream);
+        this.removeTask(taskID);
+        return res;
     }
 }

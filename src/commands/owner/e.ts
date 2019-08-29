@@ -28,7 +28,7 @@ export default class Eval extends Command {
     }
 
     public async exec(client: BClient, message: BMessage, args: string[]): Promise<any> {
-        message.channel.send(message.author.id === client.config.general.ownerID ?
+        message.channel.send(message.author.id === client.config.general.ownerID && !message.flags.includes('b') ?
             await this.asOwner(client, message, args.join(' '))
             : await this.asGuest(client, args.join(' '))
         );
@@ -40,7 +40,7 @@ export default class Eval extends Command {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { channel, guild, author } = message;
         try {
-            evaled = eval(code);
+            evaled = await eval(code);
         } catch (err) {
             evaled = err.message;
         }
@@ -62,7 +62,7 @@ export default class Eval extends Command {
             }),
         })).json();
         if (res.message) return this.clean(res.message);
-        if (!!res.stderr && res.stderr.length > 0) return this.clean(res.stderr);
+        if (!!res.stderr && res.stderr.length > 0) return this.clean(res.stderr.split('\n')[4]);
         return this.clean(res.stdout);
     }
 

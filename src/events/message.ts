@@ -12,6 +12,10 @@ setTimeout((): void => {
     messages = 0;
 }, 10 * 1000);
 const lag = lagThingy(1000);
+
+// ! Those commands dont exist anymore, they get transformed to play $command
+const deprecated = ['airhorn', 'badumtss', 'john', 'letsgo', 'stfu', 'trashman'];
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config.js');
 
@@ -42,15 +46,23 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     const { author, member, guild } = message;
     const channel = message.channel as TextChannel;
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    let args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
-    const cmd = client.commands.get(command);
+    let cmd = client.commands.get(command);
     let voiceConnection: VoiceConnection;
 
+    // Check for deprecated commands and replace them.
+    if (!cmd && deprecated.includes(command)) {
+        cmd = client.commands.get('play');
+        args = [command];
+        message.warn(`Deprecated, use \`${prefix}play ${command}\` instead`);
+    }
+
     if (!cmd) return;
+
     if (lag() > 20) {
-        return message.error('the client is currently not able to process your request. please try again later',
-            `process overloaded, ${lag().toFixed(2)}ms lag.`);
+        return message.error('The client is currently not able to process your request. please try again later',
+            `process overloaded, ${lag().toFixed(2)}ms lag`);
     };
 
     while (args[0] && args[0][0] === '-') {
