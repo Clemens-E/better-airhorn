@@ -6,7 +6,7 @@ import { NodeMessage, Server } from 'veza';
 
 const srv = new Server('DownloadManager');
 
-srv.on('connect', (client: any): void => console.log(`${client.name} connected!`));
+srv.on('connect', (client: any): void => console.log(`${client.name} connected to ${srv.name}`));
 
 
 function scan(path: string): Promise<boolean> {

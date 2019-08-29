@@ -4,7 +4,7 @@ import Similar from 'string-similarity';
 const srv = new Server('SimilarityCalculator');
 const commands: string[] = [];
 
-srv.on('connect', (client: any): void => console.log(`${client.name} connected!`));
+srv.on('connect', (client: any): void => console.log(`${client.name} connected to ${srv.name}`));
 
 srv.on('message', (m: NodeMessage): void => {
     if (m.data.type === 'ADD_NAME') {
