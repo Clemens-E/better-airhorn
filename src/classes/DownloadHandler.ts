@@ -3,7 +3,7 @@ import IPCChildConnector from './IPCChildConnector';
 export default class DownloadHandler extends IPCChildConnector {
 
     public constructor() {
-        super('DownloadManager');
+        super('DownloadManager', 'DownloadManager');
     }
 
 

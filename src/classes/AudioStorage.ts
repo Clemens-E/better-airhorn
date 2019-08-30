@@ -10,7 +10,7 @@ import SimilarityHandler from './SimilarityHandler';
 export default class AudioStorage extends TaskHandler {
     private pool: pg.Pool;
     private mp3: MP3Manager;
-    private similarity: SimilarityHandler;
+    public similarity: SimilarityHandler;
     private readonly privacyOptions: string[];
 
     /**
@@ -119,12 +119,14 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<void>}
      * @memberof AudioStorage
      */
-    public async deleteAudio(fileName: string, deleteFile = true): Promise<void> {
+    public async delete(fileName: string, deleteFile = true): Promise<void> {
         const taskID = this.addTask();
         if (deleteFile) {
             await this.mp3.delete(fileName);
         }
-        await this.pool.query('DELETE FROM files WHERE fileName = $1', [fileName]);
+
+        const name = await this.pool.query('DELETE FROM files WHERE fileName = $1 RETURNING commandname', [fileName]);
+        this.similarity.remove(name.rows[0].commandname);
         this.removeTask(taskID);
     }
 

@@ -66,8 +66,8 @@ export default class Eval extends Command {
         return this.clean(res.stdout);
     }
 
-    public async clean(text: string): Promise<string> {
-        if (text && text.constructor.name == 'Promise' || text.constructor.name == 'WrappedPromise') {
+    public async clean(text: any): Promise<string> {
+        if (!!text && !!text.constructor && (text.constructor.name == 'Promise' || text.constructor.name == 'WrappedPromise')) {
             text = await text;
         }
         if (typeof text !== 'string') {

@@ -13,28 +13,30 @@ export default class IPCChildConnector {
     private _ping: number
     private task: string;
 
-    public connected(): boolean {
-        return this.client.servers.get(this.serverLabel).status === ClientSocketStatus.Connected;
+    public get connected(): boolean {
+        const server = this.client.servers.get(this.serverLabel);
+        return !!server && server.status === ClientSocketStatus.Ready;
     }
 
-    public constructor(task: string) {
+    public constructor(task: string, serverLabel: any) {
         this.task = task;
         this.client = new Client('MasterProcess');
-        this.serverLabel = 'DownloadManager';
+        this.serverLabel = serverLabel;
         this.connect();
     }
 
     private connect(): Promise<void> {
         return new Promise((res, rej): void => {
+            if (this.connected) return res();
             let connected = false;
             // kill the process if its running
             if (this.child) this.child.kill();
             // close every connection
             if (this.client) this.client.servers.forEach((x): boolean => x.disconnect());
             this.child = fork(`${config.general.subTasks}/${this.task}.ts`);
-            this.child.once('message', (e): void => {
+            this.child.once('message', async (e): Promise<void> => {
                 if (e.type !== 'READY_TO_CONNECT') return;
-                this.client.connectTo(e.data);
+                await this.client.connectTo(e.data);
                 connected = true;
                 res();
             });

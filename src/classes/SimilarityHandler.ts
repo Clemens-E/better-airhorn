@@ -3,7 +3,7 @@ import IPCChildConnector from './IPCChildConnector';
 export default class SimilarityHandler extends IPCChildConnector {
 
     public constructor() {
-        super('SimilarityCalculator');
+        super('SimilarityCalculator', 'SimilarityCalculator');
     }
 
     public add(name: string): Promise<boolean> {
