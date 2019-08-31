@@ -1,7 +1,7 @@
 import { BClient, BMessage } from '../../models/client';
 import Command from '../../models/command';
 
-export default class Eval extends Command {
+export default class Invite extends Command {
     private readonly denyMessage = 'Missing permissions to this Audio';
 
     public constructor(client: BClient) {
@@ -10,7 +10,7 @@ export default class Eval extends Command {
                 name: 'invite',
                 category: 'misc',
                 example: 'invite',
-                description: 'sends you an invite to invite this bot!',
+                description: 'sends you an invite for this bot',
 
                 userPermissions: [],
                 userChannelPermissions: [],

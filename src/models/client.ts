@@ -1,11 +1,12 @@
-import { Client, ClientOptions, Structures, TextChannel, MessageEmbed, Collection, Message } from 'discord.js';
-import { Config } from '../../configs/generalConfig';
-import { Pool } from 'pg';
-import Command from './command';
-import enmap from 'enmap';
 import Sentry from '@sentry/node';
-import AudioStorage from '../classes/AudioStorage';
 import MessageTaskList from 'discord-message-tasks';
+import { Client, ClientOptions, Message, MessageEmbed, Structures, TextChannel } from 'discord.js';
+import enmap from 'enmap';
+import { Pool } from 'pg';
+
+import { Config } from '../../configs/generalConfig';
+import AudioStorage from '../classes/AudioStorage';
+import Command from './command';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config.js');

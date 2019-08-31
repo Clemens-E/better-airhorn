@@ -1,6 +1,6 @@
+import Discord, { TextChannel } from 'discord.js';
+
 import { BClient } from '../models/client';
-import { TextChannel, Guild } from 'discord.js';
-import Discord from 'discord.js';
 
 
 module.exports = async (client: BClient, event: any): Promise<void> => {

@@ -25,6 +25,8 @@ module.exports = {
         done: '<a:BE_YES:513771657383378973>',
         empty: '<:empty:604779509568241684>',
         crashed: '<:crashed:589476154201866243>',
+        offline: '<:offline:596443669280587776>',
+        online: '<:online:596442525636624409>',
     },
 
     general: {
@@ -32,5 +34,6 @@ module.exports = {
         prefix: '$',
         voteURL: 'https://webhooks.chilo.space/better-airhorn',
         subTasks: path.normalize(`${__dirname}/../src/Subtasks`),
+        supportServer: 'https://discordapp.com/invite/5m7Xss3',
     },
 };

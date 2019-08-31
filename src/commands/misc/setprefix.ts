@@ -1,7 +1,7 @@
 import { BClient, BMessage } from '../../models/client';
 import Command from '../../models/command';
 
-export default class Eval extends Command {
+export default class SetPrefix extends Command {
     private readonly denyMessage = 'Missing permissions to this Audio';
 
     public constructor(client: BClient) {

@@ -99,12 +99,24 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
 
         if (!voted) {
             return message.warn(`This is a Beta Feature and requires a lot of Performance and Storage.
-            You did not vote in the last 24 Hours. [Click me to Vote](https://discordbots.org/bot/503996428042108928/vote 'Vote for me!')
+            You did not vote in the last 24 Hours. [Click me to Vote](https://discordbots.org/bot/${client.user.id}/vote 'Vote for me!')
             If you already voted, but this doesn't work, wait up to 5 Minutes.`, 'Thank you for supporting this Bot!');
         }
     }
 
     client.messagesPerSecond = messagesPerSecond;
+
+    // Usage statistics
+    if (!client.usage.has(command)) {
+        client.usage.set(command, {
+            usage: [],
+        });
+    }
+    client.usage.push(command, {
+        time: Date.now(),
+        user: message.author.id,
+        guild: guild.id,
+    }, 'usage', true);
 
     // Hah, rejections? Thats what I get!
     const rejection = cmd.exec(client, message, args, voiceConnection);
@@ -112,7 +124,8 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
         rejection.catch((e: Error): void => {
             if (process.env.NODE_ENV === 'production') client.sentry.captureException(e);
             console.error(e);
-            message.error(`${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](https://discordapp.com/invite/5m7Xss3 \'Support Server\')`,
+            message.error(`
+            ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
                 e.message);
         });
     }

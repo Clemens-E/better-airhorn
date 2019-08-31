@@ -21,6 +21,8 @@ interface Emojis {
     crashed: string;
     empty: string;
     done: string;
+    offline: string;
+    online: string;
 }
 
 //* ~~~~~~~~~~~~ Audio Settings ~~~~~~~~~~~ //
@@ -39,4 +41,5 @@ interface General {
     prefix: string;
     voteURL: string;
     subTasks: string;
+    supportServer: string;
 }

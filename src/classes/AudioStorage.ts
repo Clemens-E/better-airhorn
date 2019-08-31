@@ -3,8 +3,8 @@ import pg from 'pg';
 
 import AudioCommand from '../models/AudioCommand';
 import MP3Manager from './MP3Manager';
-import TaskHandler from './TaskManager';
 import SimilarityHandler from './SimilarityHandler';
+import TaskHandler from './TaskManager';
 
 
 export default class AudioStorage extends TaskHandler {

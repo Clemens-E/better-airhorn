@@ -1,4 +1,3 @@
-import { Message, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
 
 import { postText } from '../../classes/TextHandler';

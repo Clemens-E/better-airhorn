@@ -1,5 +1,6 @@
-import { BClient } from "./client";
-import { Message, VoiceConnection, Permissions, PermissionString } from "discord.js";
+import { Message, PermissionString, VoiceConnection } from 'discord.js';
+
+import { BClient } from './client';
 
 
 export default abstract class Command {
@@ -7,7 +8,7 @@ export default abstract class Command {
     //* ~~~~~~~~~~~~ Miscellaneous ~~~~~~~~~~~~ //
     name: string;
     category: 'music' | 'misc' | 'owner';
-    example: string;
+    example?: string;
     description: string;
 
     //* ~~~~~~~~~~~~~ Permissions ~~~~~~~~~~~~~ //
@@ -21,11 +22,12 @@ export default abstract class Command {
     voteLock: boolean;
 
     abstract async exec(client: BClient, message: Message, args: string[], voice?: VoiceConnection): Promise<any>;
+
     constructor(client: BClient, infos: {
-        name: string, category: 'music' | 'misc' | 'owner', example: string, description: string
-        userPermissions: PermissionString[], userChannelPermissions: PermissionString[],
-        botPermissions: PermissionString[], botChannelPermissions: PermissionString[]
-        voiceChannel: boolean, voteLock: boolean
+        name: string; category: 'music' | 'misc' | 'owner'; example?: string; description: string;
+        userPermissions: PermissionString[]; userChannelPermissions: PermissionString[];
+        botPermissions: PermissionString[]; botChannelPermissions: PermissionString[];
+        voiceChannel: boolean; voteLock: boolean;
     }) {
         this.name = infos.name;
         this.category = infos.category;

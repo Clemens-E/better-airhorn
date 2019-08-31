@@ -6,7 +6,7 @@ import { BClient } from '../../models/client';
 import Command from '../../models/command';
 
 
-export default class Eval extends Command {
+export default class Exec extends Command {
 
     public constructor(client: BClient) {
         super(client,

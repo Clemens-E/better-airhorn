@@ -34,7 +34,7 @@ export default class Play extends Command {
         const cmd = await client.AudioStorage.fetchAudio(args[0]);
         if (!cmd) {
             const similar = await client.AudioStorage.similarity.bestMatch(args[0]);
-            return message.warn(`I cant find a audio named ${args[0]}`, `did you mean "${similar}"?`);
+            return message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${similar}"?`);
         }
 
         switch (cmd.privacymode) {
@@ -69,6 +69,7 @@ export default class Play extends Command {
                 }
             })
             .on('end', () =>
+                // We dont care for that error, only if we ever get rate limited for doing it.
                 msg.reactions.removeAll().catch(() => null)
             );
 
