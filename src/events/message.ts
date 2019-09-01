@@ -3,7 +3,9 @@ import lagThingy from 'event-loop-lag';
 import fetch from 'node-fetch';
 
 import { Config } from '../../configs/generalConfig';
-import { BClient, BMessage } from '../models/client';
+import { logger } from '../classes/Logger';
+import { BClient } from '../models/Client';
+import { BMessage } from '../models/Message';
 
 let messages = 0;
 let messagesPerSecond = 0;
@@ -62,7 +64,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
 
     if (lag() > 20) {
         return message.error('The client is currently not able to process your request. please try again later',
-            `process overloaded, ${lag().toFixed(2)}ms lag`);
+            `process overloaded, ${lag().toFixed(2)} ms lag`);
     };
 
     while (args[0] && args[0][0] === '-') {
@@ -84,6 +86,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     if (cmd.voiceChannel) {
         if (!member.voice.channel) return message.warn('You need to be in a Voice Channel to run this command.');
         if (!member.voice.channel.joinable) return message.error('I\'m not able to join your Voice Channel. Is it full? Do I have permissions?');
+        if (!await cmd.allowVoice(message, args)) return;
         voiceConnection = await member.voice.channel.join().catch((): any => null);
 
         if (!voiceConnection) return message.error('There appeared an error while connecting to your Voice Channel');
@@ -119,11 +122,11 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     }, 'usage', true);
 
     // Hah, rejections? Thats what I get!
-    const rejection = cmd.exec(client, message, args, voiceConnection);
+    const rejection = cmd.exec(message, args, voiceConnection);
     if (rejection) {
         rejection.catch((e: Error): void => {
             if (process.env.NODE_ENV === 'production') client.sentry.captureException(e);
-            console.error(e);
+            logger.error(`${cmd.name} crashed:`, e);
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
                 e.message);

@@ -32,6 +32,10 @@ export default class MP3Manager extends TaskHandler {
 
     public get RemovedFiles(): number { return this.removedFiles; }
 
+    public async exists(filename: string): Promise<boolean> {
+        return (await FileSystemUtils.exists(`${this.storage}/${filename}`)).exists;
+    }
+
     public shutdown(): Promise<boolean> {
         return this.drainTasks();
     }
@@ -58,7 +62,7 @@ export default class MP3Manager extends TaskHandler {
     }
 
 
-    protected newFilename(tmp = false, shard = 0): string {
+    public newFilename(tmp = false, shard = 0): string {
         if (tmp) {
             const time = Date.now().toString();
             return `${id()}.${time}`;

@@ -1,7 +1,7 @@
 import id from 'cuid';
 import { promisify } from 'util';
 
-import Task from '../models/Task';
+import { Task } from '../models/Task';
 
 
 export default class TaskHandler {
@@ -9,7 +9,7 @@ export default class TaskHandler {
     private acceptNewTasks: boolean;
     private tasks: Task[];
 
-    constructor(waitTime = 10 * 1000) {
+    public constructor(waitTime = 10 * 1000) {
         this.waitTime = waitTime;
         this.tasks = [];
         this.acceptNewTasks = true;

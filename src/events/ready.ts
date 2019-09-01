@@ -1,8 +1,9 @@
-import { BClient } from '../models/client';
+import { BClient } from '../models/Client';
+import { logger } from '../classes/Logger';
 
 module.exports = (client: BClient): void => {
-    client.AudioStorage.fetchAudios().then(r =>
-        r.forEach(x => client.AudioStorage.similarity.add(x.commandname))
+    client.AudioStorage.fetchAll().then((r): void =>
+        r.forEach((x): Promise<boolean> => client.AudioStorage.similarity.add(x.commandname))
     );
-    console.log(`ready as ${client.user.tag}`);
+    logger.log(`ready as ${client.user.tag}`);
 };

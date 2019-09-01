@@ -2,6 +2,7 @@ import { ChildProcess, fork } from 'child_process';
 import { Client, ClientSocketStatus } from 'veza';
 
 import { Config } from '../../configs/generalConfig';
+import { logger } from './Logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config.js');
@@ -34,9 +35,12 @@ export default class IPCChildConnector {
             // close every connection
             if (this.client) this.client.servers.forEach((x): boolean => x.disconnect());
             this.child = fork(`${config.general.subTasks}/${this.task}.ts`);
+            logger.debug('[IPC]', `forking new ${this.task} child`);
             this.child.once('message', async (e): Promise<void> => {
                 if (e.type !== 'READY_TO_CONNECT') return;
                 await this.client.connectTo(e.data);
+                this.client.on('connect', (): void => logger.debug('[IPC]', `connected to ${this.serverLabel}`));
+                this.client.on('disconnect', (): void => logger.debug('[IPC]', `disconnected from ${this.serverLabel}`));
                 connected = true;
                 res();
             });
@@ -56,10 +60,12 @@ export default class IPCChildConnector {
         const timeStart = Date.now();
         await this.send({ type: 'PING' });
         this._ping = Date.now() - timeStart;
+        logger.debug('[IPC]', `received ping: ${this._ping} ms`);
         return this._ping;
     }
 
     public kill(): void {
+        logger.debug('[IPC]', 'disconnecting from every process and killing child');
         if (this.client) this.client.servers.forEach((x): boolean => x.disconnect());
         if (this.child) this.child.kill();
     }

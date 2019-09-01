@@ -1,41 +1,51 @@
-import { Message, VoiceConnection } from 'discord.js';
+import { Message, MessageReaction, User, VoiceConnection } from 'discord.js';
 
-import { BClient, BMessage } from '../../models/client';
-import Command from '../../models/command';
+import { BClient } from '../../models/Client';
+import Command from '../../models/Command';
+import { BMessage } from '../../models/Message';
 
 export default class Play extends Command {
 
     public constructor(client: BClient) {
-        super(client,
-            {
-                name: 'play',
-                category: 'music',
-                example: 'play mayo',
-                description: 'plays an audio file',
+        super(client, {
+            name: 'play',
+            category: 'music',
+            example: 'play mayo',
+            description: 'plays an audio file',
 
-                userPermissions: [],
-                userChannelPermissions: [],
+            userPermissions: [],
+            userChannelPermissions: [],
 
-                botPermissions: ['CONNECT'],
-                botChannelPermissions: ['SEND_MESSAGES'],
+            botPermissions: ['CONNECT'],
+            botChannelPermissions: ['SEND_MESSAGES'],
 
-                voiceChannel: true,
-                voteLock: false,
-            });
+            voiceChannel: true,
+            voteLock: false,
+        });
     }
 
     private reject(msg: BMessage): Promise<Message> {
         return msg.error('Missing permissions to this Audio');
     }
 
-    public async exec(client: BClient, message: BMessage, args: string[], voice: VoiceConnection): Promise<any> {
+    public async allowVoice(message: BMessage, args: string[]): Promise<boolean> {
+        const cmd = await this.client.AudioStorage.fetch(args[0]);
+        if (!cmd) {
+            const similar = await this.client.AudioStorage.similarity.bestMatch(args[0]);
+            message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${similar}"?`);
+        }
+        return !!cmd;
+    }
+
+    public async exec(message: BMessage, args: string[], voice: VoiceConnection): Promise<any> {
         const { author, guild } = message;
 
-        const cmd = await client.AudioStorage.fetchAudio(args[0]);
+        const cmd = await this.client.AudioStorage.fetch(args[0]);
         if (!cmd) {
-            const similar = await client.AudioStorage.similarity.bestMatch(args[0]);
-            return message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${similar}"?`);
+            return message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
+                await this.client.AudioStorage.similarity.bestMatch(args[0])}"?`);
         }
+
 
         switch (cmd.privacymode) {
             case 1:
@@ -51,26 +61,26 @@ export default class Play extends Command {
             DEBUG INFO: Privacy Mode = ${ cmd.privacymode} `);
         }
 
-        await client.AudioStorage.play(voice, cmd.commandname);
+        await this.client.AudioStorage.play(voice, cmd.commandname);
         voice.disconnect();
         const msg = await message.success(`finished playing \`${cmd.commandname}\``, 'react with 👍/👎 to upvote/downvote this audio');
-        msg.createReactionCollector((r, u) => !u.bot && (r.emoji.name === '👍' || r.emoji.name === '👎'),
+        msg.createReactionCollector((r: MessageReaction, u: User): boolean => !u.bot && (r.emoji.name === '👍' || r.emoji.name === '👎'),
             { time: 20 * 1000 })
 
-            .on('collect', (r) => {
+            .on('collect', (r: MessageReaction): void => {
                 if (r.emoji.name === '👍') {
-                    client.AudioStorage.upvote(r.users.last().id, cmd.commandname)
-                        .then(() => message.success(`👍 upvoted \`${cmd.commandname}\``))
-                        .catch(() => null);
+                    this.client.AudioStorage.upvote(r.users.last().id, cmd.commandname)
+                        .then((): Promise<Message> => message.success(`👍 upvoted \`${cmd.commandname}\``))
+                        .catch((): null => null);
                 } else {
-                    client.AudioStorage.downvote(r.users.last().id, cmd.commandname)
-                        .then(() => message.success(`👎 downvoted \`${cmd.commandname}\``))
-                        .catch(() => null);
+                    this.client.AudioStorage.downvote(r.users.last().id, cmd.commandname)
+                        .then((): Promise<Message> => message.success(`👎 downvoted \`${cmd.commandname}\``))
+                        .catch((): null => null);
                 }
             })
-            .on('end', () =>
+            .on('end', (): Promise<Message> | null =>
                 // We dont care for that error, only if we ever get rate limited for doing it.
-                msg.reactions.removeAll().catch(() => null)
+                msg.reactions.removeAll().catch((): null => null)
             );
 
         await msg.react('👍');

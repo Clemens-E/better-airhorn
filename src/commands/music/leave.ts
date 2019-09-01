@@ -1,27 +1,27 @@
-import { BClient, BMessage } from '../../models/client';
-import Command from '../../models/command';
+import { BClient } from '../../models/Client';
+import Command from '../../models/Command';
+import { BMessage } from '../../models/Message';
 
 export default class Leave extends Command {
 
     public constructor(client: BClient) {
-        super(client,
-            {
-                name: 'leave',
-                category: 'music',
-                description: 'leaves your voice channel, only use it when the bot is stuck in the channel',
+        super(client, {
+            name: 'leave',
+            category: 'music',
+            description: 'leaves your voice channel, only use it when the bot is stuck in the channel',
 
-                userPermissions: [],
-                userChannelPermissions: [],
+            userPermissions: [],
+            userChannelPermissions: [],
 
-                botPermissions: [],
-                botChannelPermissions: [],
+            botPermissions: [],
+            botChannelPermissions: [],
 
-                voiceChannel: false,
-                voteLock: false,
-            });
+            voiceChannel: false,
+            voteLock: false,
+        });
     }
 
-    public async exec(client: BClient, message: BMessage, args: string[]): Promise<any> {
+    public async exec(message: BMessage): Promise<any> {
         if (message.member.voice && message.member.voice.channel) {
             message.member.voice.channel.leave();
             message.success('I left your voice channel');

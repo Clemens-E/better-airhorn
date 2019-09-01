@@ -1,6 +1,6 @@
 import Discord, { TextChannel } from 'discord.js';
 
-import { BClient } from '../models/client';
+import { BClient } from '../models/Client';
 
 
 module.exports = async (client: BClient, event: any): Promise<void> => {
@@ -25,7 +25,7 @@ module.exports = async (client: BClient, event: any): Promise<void> => {
 
 
     if (!message) {
-        message = await channel.messages.fetch(data.message_id).catch(() => null);
+        message = await channel.messages.fetch(data.message_id).catch((): null => null);
     }
     if (!message) return;
     if (!message.reactions) return;

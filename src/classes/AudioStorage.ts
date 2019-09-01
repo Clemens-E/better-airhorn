@@ -1,7 +1,8 @@
 import { User, VoiceConnection } from 'discord.js';
 import pg from 'pg';
 
-import AudioCommand from '../models/AudioCommand';
+import { AudioCommand } from '../models/AudioCommand';
+import { logger } from './Logger';
 import MP3Manager from './MP3Manager';
 import SimilarityHandler from './SimilarityHandler';
 import TaskHandler from './TaskManager';
@@ -11,7 +12,7 @@ export default class AudioStorage extends TaskHandler {
     private pool: pg.Pool;
     private mp3: MP3Manager;
     public similarity: SimilarityHandler;
-    private readonly privacyOptions: string[];
+    public readonly privacyOptions: string[];
 
     /**
      *Creates an instance of AudioStorage.
@@ -27,6 +28,7 @@ export default class AudioStorage extends TaskHandler {
         this.similarity = new SimilarityHandler();
         this.pool = pool;
         this.privacyOptions = ['only send', 'only me', 'only this guild', 'everyone'];
+        this.checkFiles();
     }
 
     /**
@@ -42,13 +44,28 @@ export default class AudioStorage extends TaskHandler {
         await this.pool.end();
     }
 
+    public async checkFiles(): Promise<void> {
+        const commands = await this.fetchAll();
+        const exists = await Promise.all(commands.map((x): Promise<boolean> => this.mp3.exists(x.filename)));
+        const dontExist = exists.filter((x): boolean => !x).length;
+        if (dontExist > (commands.length * (2 / 100))) {
+            logger.error(`${dontExist} AUDIOFILES ARE MISSING`);
+            if (process.env.NODE_ENV === 'production') {
+                logger.error('THIS IS PRODUCTION; SHUTTING DOWN');
+                process.exit(1);
+            }
+        } else if (dontExist > 0) {
+            logger.warn(`${dontExist} AUDIO FILES ARE MISSING`);
+        }
+    }
+
     /**
      *Array of all AudioCommands
      *
      * @returns {Promise<AudioCommand[]>}
      * @memberof AudioStorage
      */
-    public async fetchAudios(): Promise<AudioCommand[]> {
+    public async fetchAll(): Promise<AudioCommand[]> {
         return (await this.pool.query('SELECT * FROM files')).rows;
     }
 
@@ -89,7 +106,7 @@ export default class AudioStorage extends TaskHandler {
      * @async
      */
     public async nameExists(name: string): Promise<boolean> {
-        const names = (await this.pool.query('SELECT commandName FROM files')).rows.map(x => x.commandname);
+        const names = (await this.pool.query('SELECT commandName FROM files')).rows.map((x): string => x.commandname);
         return names.includes(name);
     }
 
@@ -103,8 +120,9 @@ export default class AudioStorage extends TaskHandler {
      * @memberof AudioStorage
      * @async
      */
-    public async addAudio(command: AudioCommand): Promise<string> {
+    public async add(command: AudioCommand, shard = 0): Promise<string> {
         const taskID = this.addTask();
+        command.filename = this.mp3.newFilename(false, shard);
         const r = (await this.pool.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
             [command.commandname, command.filename, command.privacymode, command.guild, command.user])).rows[0].name;
         this.removeTask(taskID);
@@ -146,7 +164,7 @@ export default class AudioStorage extends TaskHandler {
      * @memberof AudioStorage
      * @async
      */
-    public async fetchAudio(commandName: string): Promise<AudioCommand> {
+    public async fetch(commandName: string): Promise<AudioCommand> {
         return (await this.pool.query('SELECT * FROM files WHERE commandName = $1', [commandName])).rows[0];
     }
 

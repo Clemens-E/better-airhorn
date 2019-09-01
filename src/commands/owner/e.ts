@@ -1,40 +1,40 @@
 import fetch from 'node-fetch';
 
 import { postText } from '../../classes/TextHandler';
-import { BClient, BMessage } from '../../models/client';
-import Command from '../../models/command';
+import { BClient } from '../../models/Client';
+import { BMessage } from '../../models/Message';
+import Command from '../../models/Command';
 
 
 export default class Eval extends Command {
 
     public constructor(client: BClient) {
-        super(client,
-            {
-                name: 'e',
-                category: 'owner',
-                example: 'e client.token',
-                description: 'executes javascript code',
+        super(client, {
+            name: 'e',
+            category: 'owner',
+            example: 'e client.token',
+            description: 'executes javascript code',
 
-                userPermissions: [],
-                userChannelPermissions: [],
+            userPermissions: [],
+            userChannelPermissions: [],
 
-                botPermissions: [],
-                botChannelPermissions: ['SEND_MESSAGES'],
+            botPermissions: [],
+            botChannelPermissions: ['SEND_MESSAGES'],
 
-                voiceChannel: false,
-                voteLock: false,
-            });
+            voiceChannel: false,
+            voteLock: false,
+        });
     }
 
-    public async exec(client: BClient, message: BMessage, args: string[]): Promise<any> {
-        message.channel.send(message.author.id === client.config.general.ownerID && !message.flags.includes('b') ?
-            await this.asOwner(client, message, args.join(' '))
-            : await this.asGuest(client, args.join(' '))
+    public async exec(message: BMessage, args: string[]): Promise<any> {
+        message.channel.send(message.author.id === this.client.config.general.ownerID && !message.flags.includes('b') ?
+            await this.asOwner(message, args.join(' '))
+            : await this.asGuest(args.join(' '))
         );
     }
 
 
-    private async asOwner(client: BClient, message: BMessage, code: string): Promise<string> {
+    private async asOwner(message: BMessage, code: string): Promise<string> {
         let evaled;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { channel, guild, author } = message;
@@ -46,7 +46,7 @@ export default class Eval extends Command {
         return this.clean(evaled);
     }
 
-    private async asGuest(client: BClient, code: string): Promise<string> {
+    private async asGuest(code: string): Promise<string> {
         const res = await (await fetch('https://run.glot.io/languages/javascript/latest', {
             method: 'POST',
             headers: {

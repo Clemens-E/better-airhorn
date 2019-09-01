@@ -3,17 +3,17 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import { NodeMessage, Server } from 'veza';
+import { logger } from '../classes/Logger';
 
 const srv = new Server('DownloadManager');
 
-srv.on('connect', (client: any): void => console.log(`${client.name} connected to ${srv.name}`));
+srv.on('connect', (client: any): void => logger.info(`${client.name} connected to ${srv.name}`));
 
 
 function scan(path: string): Promise<boolean> {
-    return new Promise((res, rej): void => {
+    return new Promise((res): void => {
         exec(`clamscan ${path} -r --remove`, (err: any, stdout: string): void => {
             res((stdout.split('\n')[0].split(' ')[1] || '').trim() === 'OK');
-
         });
     });
 }
@@ -31,7 +31,6 @@ function download(url: string, path: string): Promise<void> {
 
 srv.on('message', async (m: NodeMessage): Promise<void> => {
     if (m.data.type === 'DOWNLOAD') {
-        console.log(m.data.data);
         m.reply(await download(m.data.data.url, m.data.data.path));
     } else if (m.data.type === 'SCAN') {
         m.reply(await scan(m.data.data.path));
