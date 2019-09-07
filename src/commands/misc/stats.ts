@@ -42,7 +42,8 @@ export default class Stats extends Command {
                     this.client.config.emojis.offline}`).join('\n');
         const usage = this.calculateUsage();
 
-        const embed = new MessageEmbed().setColor(this.client.config.colors.neutral)
+        const embed = new MessageEmbed()
+            .setColor(this.client.config.colors.neutral)
             .addField('**> Bot User**', `${this.ticks}js
 Uptime: ${uptime}
 Current Shard: ${message.guild.shardID}
@@ -72,7 +73,8 @@ ${this.ticks}
             .addField('**> Shards**', shards)
             .addField('**> Other Services**', `
 [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL, this.client.config)}`)
-            .setFooter(`Developer & Owner: ${(await this.client.users.fetch(this.client.config.general.ownerID).catch((): { tag: string } => ({ tag: '' }))).tag}`);
+            .setFooter(
+                `Developer & Owner: ${(await this.client.users.fetch(this.client.config.general.ownerID).catch((): { tag: string } => ({ tag: '' }))).tag}`);
 
         (await msg).edit(embed);
     }

@@ -5,8 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "ts-node ./src/index.ts",
-        "build": "tsc -p ."
+        "start": "ts-node src/index.ts",
+        "debug": "nodemon --inspect=0 src/index.ts",
+        "build": "tsc"
     },
     "repository": {
         "type": "git",
@@ -36,6 +37,7 @@
         "@types/node-fetch": "^2.5.0",
         "@types/pg": "^7.4.14",
         "@types/string-similarity": "^3.0.0",
+        "@types/ws": "^6.0.3",
         "@typescript-eslint/eslint-plugin": "^2.0.0",
         "@typescript-eslint/parser": "^2.0.0",
         "@typescript-eslint/typescript-estree": "^2.0.0",

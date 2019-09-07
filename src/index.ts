@@ -20,7 +20,7 @@ BMessage;
         messageCacheMaxSize: 20,
     });
     readdir(`${__dirname}/commands/`, {
-        fileFilter: '*.ts',
+        fileFilter: ['*.ts', '*.js'],
     })
         .on('data', (e: any): void => {
             client.commands.set(e.basename.split('.')[0], new (require(e.fullPath).default)(client));
@@ -31,7 +31,7 @@ BMessage;
 
     let events = 0;
     readdir(`${__dirname}/events/`, {
-        fileFilter: '*.ts',
+        fileFilter: ['*.ts', '*.js'],
     })
         .on('data', (e: any): void => {
             client.on(e.basename.split('.')[0], require(e.fullPath).bind(null, client));

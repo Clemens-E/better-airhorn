@@ -1,4 +1,4 @@
-import { MessageEmbed, MessageReaction } from 'discord.js';
+import { MessageEmbed, MessageReaction, User, ReactionStore, ReactionEmoji } from 'discord.js';
 
 import { BClient } from '../../models/Client';
 import Command from '../../models/Command';
@@ -33,14 +33,31 @@ export default class Help extends Command {
         } else {
             const categories = this.getCategories();
             let index = 0;
+            const inc = (): void => {
+                if (index >= categories.length) {
+                    index = 0;
+                    return;
+                }
+                index++;
+            };
+            const dec = (): void => {
+                if (index <= 0) {
+                    index = categories.length;
+                    return;
+                }
+                index--;
+            };
             const msg = await message.channel.send(this.showCategoryHelp(categories[index]));
-            message.createReactionCollector((r: any, u: any): boolean => u.id === message.id && (r.emoji.name === '▶' || r.emoji.name === '◀'), { time: 60 * 1000 * 2 })
+            msg.createReactionCollector((r: MessageReaction, u: User): boolean => u.id === message.author.id && (r.emoji.name === '▶' || r.emoji.name === '◀'),
+                { time: 60 * 1000 * 2 })
                 .on('collect', (r: MessageReaction): void => {
-                    if (r.emoji.name === '▶') {
-                        index++;
-
-                    }
+                    if (r.emoji.name === '▶') inc();
+                    else dec();
+                    r.users.remove(r.users.last()).catch(() => null);
+                    msg.edit(this.showCategoryHelp(categories[index]));
                 });
+            await msg.react('◀');
+            await msg.react('▶');
         }
     }
 
@@ -50,11 +67,11 @@ export default class Help extends Command {
             .setColor(this.client.config.colors.neutral)
             .setDescription(
                 `Name:          ${cmd.name}
- Description:   ${cmd.description}
- Example:      \`${cmd.example || 'none'}\`
- Category:      ${cmd.category}
- Voice Command: ${cmd.voteLock ? 'Yes' : 'No'}
- Vote locked:   ${cmd.voteLock ? 'Yes' : 'No'}`
+Description:   ${cmd.description}
+Example:      \`${cmd.example || 'none'}\`
+Category:      ${cmd.category}
+Voice Command: ${cmd.voiceChannel ? 'Yes' : 'No'}
+Vote locked:   ${cmd.voteLock ? 'Yes' : 'No'}`
             );
     }
 
@@ -63,7 +80,7 @@ export default class Help extends Command {
     }
 
     private showCategoryHelp(category: string): MessageEmbed {
-        const cate = Array.from(this.client.commands, ([, value]): Command => value);
+        const cate = Array.from(this.client.commands, ([, value]): Command => value).filter(x => x.category === category);
         return new MessageEmbed()
             .setTitle(`Help for ${category}`)
             .setColor(this.client.config.colors.neutral)

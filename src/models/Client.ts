@@ -10,7 +10,7 @@ import { logger } from '../classes/Logger';
 import Command from './Command';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config.js');
+const config: Config = require('../../configs/config');
 
 export class BClient extends Client {
     public config: Config;

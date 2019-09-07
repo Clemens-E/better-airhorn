@@ -15,11 +15,11 @@ setTimeout((): void => {
 }, 10 * 1000);
 const lag = lagThingy(1000);
 
-// ! Those commands dont exist anymore, they get transformed to play $command
+// ! Those commands dont exist anymore, they get transformed to play {command}
 const deprecated = ['airhorn', 'badumtss', 'john', 'letsgo', 'stfu', 'trashman'];
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config.js');
+const config: Config = require('../../configs/config');
 
 /**
  *Checks if a user voted on discordbots.com
@@ -82,16 +82,6 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     if (uMissingPerms.length > 0) return message.warn(`You are missing the following permissions:\`\`\`${uMissingPerms.join('\n')}\`\`\``);
     if (uChannelMissingPerms.length > 0) return message.warn(`You are missing the following permissions:\`\`\`${uChannelMissingPerms.join('\n')}\`\`\``);
 
-    //  connect to VoiceChannel, if required by the command  //
-    if (cmd.voiceChannel) {
-        if (!member.voice.channel) return message.warn('You need to be in a Voice Channel to run this command.');
-        if (!member.voice.channel.joinable) return message.error('I\'m not able to join your Voice Channel. Is it full? Do I have permissions?');
-        if (!await cmd.allowVoice(message, args)) return;
-        voiceConnection = await member.voice.channel.join().catch((): any => null);
-
-        if (!voiceConnection) return message.error('There appeared an error while connecting to your Voice Channel');
-    }
-
     //  check if the user voted, if required by the command  //
     if (cmd.voteLock) {
         const voted = await hasVoted(author.id).catch((): void => null);
@@ -101,15 +91,26 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
         }
 
         if (!voted) {
-            return message.warn(`This is a Beta Feature and requires a lot of Performance and Storage.
-            You did not vote in the last 24 Hours. [Click me to Vote](https://discordbots.org/bot/${client.user.id}/vote 'Vote for me!')
-            If you already voted, but this doesn't work, wait up to 5 Minutes.`, 'Thank you for supporting this Bot!');
+            return message.warn(`This requires a lot of Performance and Storage.
+        You did not vote in the last 24 Hours. [Click me to Vote](https://discordbots.org/bot/${client.user.id}/vote 'Vote for me!')
+        If you already voted, but this doesn't work, wait up to 5 Minutes.`, 'Thank you for supporting this Bot!');
         }
+    }
+
+    //  connect to VoiceChannel, if required by the command  //
+    if (cmd.voiceChannel) {
+        if (!member.voice.channel) return message.warn('You need to be in a Voice Channel to run this command.');
+        if (message.guild.voice && message.guild.voice.connection) return message.warn('I\'m already in a Voice Channel on this Guild.\nIf I\'m stuck, use the `leave` command to get me out');
+        if (!member.voice.channel.joinable) return message.error('I\'m not able to join your Voice Channel. Is it full? Do I have permissions?');
+        if (!await cmd.allowVoice(message, args)) return;
+        voiceConnection = await member.voice.channel.join().catch((): any => null);
+
+        if (!voiceConnection) return message.error('There appeared an error while connecting to your Voice Channel');
     }
 
     client.messagesPerSecond = messagesPerSecond;
 
-    // Usage statistics
+    // usage statistics
     if (!client.usage.has(command)) {
         client.usage.set(command, {
             usage: [],
@@ -122,14 +123,12 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     }, 'usage', true);
 
     // Hah, rejections? Thats what I get!
-    const rejection = cmd.exec(message, args, voiceConnection);
-    if (rejection) {
-        rejection.catch((e: Error): void => {
+    cmd.exec(message, args, voiceConnection)
+        .catch((e: Error): void => {
             if (process.env.NODE_ENV === 'production') client.sentry.captureException(e);
-            logger.error(`${cmd.name} crashed:`, e);
+            logger.error(`${cmd.name} crashed: ${e.message}`, e.stack);
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
                 e.message);
         });
-    }
 };

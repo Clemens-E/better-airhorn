@@ -2,7 +2,7 @@ import { Message, Client, TextChannel, MessageEmbed, Structures } from 'discord.
 import { Config } from '../../configs/generalConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config.js');
+const config: Config = require('../../configs/config');
 
 export class BMessage extends Message {
     public flags: string[];

@@ -12,7 +12,7 @@ import TaskHandler from './TaskManager';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config.js');
+const config: Config = require('../../configs/config');
 
 export default class MP3Manager extends TaskHandler {
     private readonly storage: string;
@@ -76,7 +76,8 @@ export default class MP3Manager extends TaskHandler {
 
     public savePCM(stream: Readable): Promise<string> {
         const taskID = this.addTask('converting stream');
-        const file = `${this.storage}/${this.newFilename()}.mp3`;
+        const filename = this.newFilename() + '.mp3';
+        const file = `${this.storage}/${filename}`;
         const tmp = `${this.storage}/${this.newFilename(true)}.tmp`;
         const writeStream = fs.createWriteStream(tmp);
         stream.pipe(writeStream);
@@ -85,7 +86,7 @@ export default class MP3Manager extends TaskHandler {
             writeStream.on('close', async (): Promise<void> => {
                 await this.convertPCMToMP3(tmp, file);
                 await FileSystemUtils.delete(tmp, true);
-                res(file);
+                res(filename);
                 this.removeTask(taskID);
             });
         });

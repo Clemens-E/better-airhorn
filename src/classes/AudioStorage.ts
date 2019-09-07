@@ -65,7 +65,27 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<AudioCommand[]>}
      * @memberof AudioStorage
      */
-    public async fetchAll(): Promise<AudioCommand[]> {
+    public async fetchAll(options?: { includeVotes?: boolean; user?: string; guild?: string }): Promise<AudioCommand[]> {
+        if (options && options.user && options.guild) throw new Error('option "user" and "guild" can\'t be defined at the same time');
+
+        let res: AudioCommand[];
+        if (options && options.user) {
+            res = (await this.pool.query('SELECT * FROM files WHERE "user"=$1', [options.user])).rows;
+        } else if (options && options.guild) {
+            res = (await this.pool.query('SELECT * FROM files WHERE privacymode=3 AND guild=$1', [options.guild])).rows;
+        } else {
+            res = (await this.pool.query('SELECT * FROM files')).rows;
+        }
+
+        if (options && options.includeVotes) {
+            const upvotes = (await this.pool.query('SELECT count(\'\'), command FROM votes WHERE upvote=true GROUP BY command')).rows;
+            const downvotes = (await this.pool.query('SELECT count(\'\'), command FROM votes WHERE upvote=false GROUP BY command')).rows;
+            return res.map((r: AudioCommand) => {
+                r.upvotes = parseInt((upvotes.find(x => x.command === r.commandname) || { count: 0 }).count);
+                r.downvotes = parseInt((downvotes.find(x => x.command === r.commandname) || { count: 0 }).count);
+                return r;
+            });
+        }
         return (await this.pool.query('SELECT * FROM files')).rows;
     }
 
@@ -120,9 +140,8 @@ export default class AudioStorage extends TaskHandler {
      * @memberof AudioStorage
      * @async
      */
-    public async add(command: AudioCommand, shard = 0): Promise<string> {
+    public async add(command: AudioCommand): Promise<string> {
         const taskID = this.addTask();
-        command.filename = this.mp3.newFilename(false, shard);
         const r = (await this.pool.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
             [command.commandname, command.filename, command.privacymode, command.guild, command.user])).rows[0].name;
         this.removeTask(taskID);

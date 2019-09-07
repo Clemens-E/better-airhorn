@@ -5,7 +5,7 @@ import { Config } from '../../configs/generalConfig';
 import { logger } from './Logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config.js');
+const config: Config = require('../../configs/config');
 
 export default class IPCChildConnector {
     private child: ChildProcess;
@@ -34,7 +34,7 @@ export default class IPCChildConnector {
             if (this.child) this.child.kill();
             // close every connection
             if (this.client) this.client.servers.forEach((x): boolean => x.disconnect());
-            this.child = fork(`${config.general.subTasks}/${this.task}.ts`);
+            this.child = fork(`${config.general.subTasks}/${this.task}`);
             logger.debug('[IPC]', `forking new ${this.task} child`);
             this.child.once('message', async (e): Promise<void> => {
                 if (e.type !== 'READY_TO_CONNECT') return;
