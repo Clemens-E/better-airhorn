@@ -41,6 +41,7 @@
         "@typescript-eslint/eslint-plugin": "^2.0.0",
         "@typescript-eslint/parser": "^2.0.0",
         "@typescript-eslint/typescript-estree": "^2.0.0",
+        "abort-controller": "^3.0.0",
         "appmetrics-dash": "^5.0.0",
         "better-sqlite-pool": "^0.2.2",
         "bufferutil": "^4.0.1",
