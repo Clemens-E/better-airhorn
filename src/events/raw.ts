@@ -1,6 +1,7 @@
 import Discord, { TextChannel } from 'discord.js';
 
 import { BClient } from '../models/Client';
+import { logger } from '../classes/Logger';
 
 
 module.exports = async (client: BClient, event: any): Promise<void> => {
@@ -32,6 +33,10 @@ module.exports = async (client: BClient, event: any): Promise<void> => {
     let reaction = message.reactions.get(emojiKey);
 
     if (!reaction) {
+        if (!data.emoji) {
+            logger.warn('emoji data is not defined!', data);
+            return;
+        }
         const emoji = new Discord.Emoji(client, data.emoji);
         reaction = new Discord.MessageReaction(client, emoji, message);
     }
