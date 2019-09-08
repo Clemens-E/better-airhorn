@@ -18,7 +18,7 @@ module.exports = async (client: BClient, event: any): Promise<void> => {
 
     // ! WILL REJECT EVERY EVENT THAT IS FOR OTHER EMOJIS
     // TODO: EXTEND REACTION COLLECTOR AND REMOVE THIS CRAP
-    if (['👍', '👎', '◀', '▶'].includes(emojiKey)) return;
+    if (!['👍', '👎', '◀', '▶'].includes(emojiKey)) return;
 
     if (event.t === 'MESSAGE_REACTION_REMOVE' && message && message.reactions.get(emojiKey) && message.reactions.get(emojiKey).users.size) return;
     if (event.t === 'MESSAGE_REACTION_ADD' && message) return;
