@@ -8,7 +8,7 @@ import { BMessage } from './models/Message';
 BMessage;
 (async (): Promise<void> => {
     const client = new BClient({
-        totalShardCount: await Discord.Util.fetchRecommendedShards(process.env.BTOKEN, 1000),
+        shardCount: await Discord.Util.fetchRecommendedShards(process.env.BTOKEN, 1000),
         presence: {
             status: 'idle',
             activity: {

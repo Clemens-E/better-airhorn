@@ -94,3 +94,6 @@ typings/
 
 #editor configs
 .vscode/
+
+#compile output
+dist/
