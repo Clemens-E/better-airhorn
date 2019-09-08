@@ -19,7 +19,7 @@ export default class Stats extends Command {
             category: 'misc',
             description: 'shows statistics about the bot',
 
-            userPermissions: ['MANAGE_GUILD'],
+            userPermissions: [],
             userChannelPermissions: [],
 
             botPermissions: [],
