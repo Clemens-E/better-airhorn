@@ -7,7 +7,7 @@ module.exports = (client: BClient): void => {
     client.AudioStorage.fetchAll().then((r): void =>
         r.forEach((x): Promise<boolean> => client.AudioStorage.similarity.add(x.commandname))
     );
-    logger.log(`ready as ${client.user.tag}`);
+    console.log(`ready as ${client.user.tag}`);
 
 
     function updateStatus(): void {
@@ -28,7 +28,7 @@ module.exports = (client: BClient): void => {
                     'shard_count': client.ws.shards.size,
                 }),
             })
-            .then((r) => logger.debug(`posted stats ${r.status}`));
+            .then((r: Response) => logger.debug(`posted stats ${r.status}`));
     }
 
     postStats();
