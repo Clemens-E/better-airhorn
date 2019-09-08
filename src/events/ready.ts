@@ -1,6 +1,6 @@
 import { BClient } from '../models/Client';
 import { logger } from '../classes/Logger';
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 
 let counter = 0;
 module.exports = (client: BClient): void => {
