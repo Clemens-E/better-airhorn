@@ -15,8 +15,8 @@ BMessage;
                 name: 'Shard Starting',
             },
         },
-        messageCacheLifetime: 60,
-        messageSweepInterval: 20,
+        messageCacheLifetime: 120,
+        messageSweepInterval: 60,
         messageCacheMaxSize: 20,
     });
     readdir(`${__dirname}/commands/`, {

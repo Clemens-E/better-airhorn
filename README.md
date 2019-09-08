@@ -17,3 +17,35 @@
 ![Used Disk Space](https://dashboard.chilo.space/api/v1/badge.svg?chart=disk_space._&alarm=disk_space_usage&label=Used%20Disk%20Space&refresh=auto)
 
 # THIS WILL BE A COMPLETE REWRITE IN TYPESCRIPT
+
+## Recording Usage
+[] = Optional\
+<> = needed\
+\
+`$recordme [time]` | The bot will join your voice channel and will record you for [time] seconds, if not provided, he will record you for 10 seconds (maximum is 20). For information about Storage see [this Point](#Recorded-Audio).\
+`$delete <name>` | Will delete a audio clip you own by its name.\
+`$play <name>` | The bot will join your voice channel and play a earlier recorded audio clip.\
+`$list [mine | guild | all]` | Sends a message listing every accessible audio clip filtered by the parameter.
+
+There are some more commands, see them with `$help` and go trough them.
+
+## Recorded Audio
+
+By using the `$recordme` command you agree to store the audio file on my server, I can not guarantee that there will never be a security breach but I will do my best to prevent them.
+Just to make sure, do never record private information.
+
+**If you don't want the audio to be stored on my file system, use mode zero ('only send'). By choosing it, the bot will send you the file, and then immediately delete it from his file system and the database.**
+
+## Self Hosting
+
+While self hosting is not supported you can clone and run it yourself if you really want.\
+Requirements:
+- Lame
+- FFmpeg
+- Git
+- Node
+
+## Dev Branch
+
+The [Dev Branch](../../tree/dev) is only used to transfer code between machines. Under no circumstances you should run this code, it may be unstable, unfinished or even include known issues.
+
