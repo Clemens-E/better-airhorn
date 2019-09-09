@@ -1,4 +1,5 @@
 import IPCChildConnector from './IPCChildConnector';
+import { promises } from 'dns';
 
 export default class SimilarityHandler extends IPCChildConnector {
 
@@ -12,6 +13,10 @@ export default class SimilarityHandler extends IPCChildConnector {
 
     public remove(name: string): Promise<boolean> {
         return this.send({ type: 'REMOVE_NAME', data: name });
+    }
+
+    public clear(): Promise<boolean> {
+        return this.send({ type: 'CLEAR_ALL' });
     }
 
     public bestMatch(name: string): Promise<string> {

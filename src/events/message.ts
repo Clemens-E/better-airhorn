@@ -103,7 +103,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
         if (message.guild.voice && message.guild.voice.connection) return message.warn('I\'m already in a Voice Channel on this Guild.\nIf I\'m stuck, use the `leave` command to get me out');
         if (!member.voice.channel.joinable) return message.error('I\'m not able to join your Voice Channel. Is it full? Do I have permissions?');
         if (!await cmd.allowVoice(message, args)) return;
-        voiceConnection = await member.voice.channel.join().catch((): any => null);
+        voiceConnection = await member.voice.channel.join().catch((): null => null);
 
         if (!voiceConnection) return message.error('There appeared an error while connecting to your Voice Channel');
     }

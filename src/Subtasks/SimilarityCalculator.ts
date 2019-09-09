@@ -10,7 +10,6 @@ srv.on('connect', (client: any): void => logger.info(`${client.name} connected t
 srv.on('message', (m: NodeMessage): void => {
     if (m.data.type === 'ADD_NAME') {
         commands.push(m.data.data);
-        logger.debug(`[IPC] added ${m.data.data} to list`);
         m.reply(true);
     } else if (m.data.type === 'REMOVE_NAME') {
         commands = commands.filter((x: string): boolean => x !== m.data.data);
@@ -18,6 +17,10 @@ srv.on('message', (m: NodeMessage): void => {
         m.reply(true);
     } else if (m.data.type === 'CALCULATE_BEST_RESULT') {
         m.reply(Similar.findBestMatch(m.data.data, commands.length > 0 ? commands : ['']).bestMatch.target);
+    } else if (m.data.type === 'CLEAR_ALL') {
+        commands = [];
+        m.reply(commands.length === 0);
+        logger.debug('[IPC] cleared list');
     } else if (m.data.type === 'PING') {
         m.reply('pong');
     }

@@ -29,6 +29,12 @@ export default class AudioStorage extends TaskHandler {
         this.pool = pool;
         this.privacyOptions = ['only send', 'only me', 'only this guild', 'everyone'];
         this.checkFiles();
+        this.similarity.on('connect', async () => {
+            await this.similarity.clear();
+            this.fetchAll().then((r): void =>
+                r.forEach((x): Promise<boolean> => this.similarity.add(x.commandname))
+            );
+        });
     }
 
     /**
@@ -70,9 +76,9 @@ export default class AudioStorage extends TaskHandler {
 
         let res: AudioCommand[];
         if (options && options.user) {
-            res = (await this.pool.query('SELECT * FROM files WHERE "user"=$1', [options.user])).rows;
+            res = (await this.pool.query('SELECT * FROM files WHERE "user"=$1 AND privacymode=3', [options.user])).rows;
         } else if (options && options.guild) {
-            res = (await this.pool.query('SELECT * FROM files WHERE privacymode=3 AND guild=$1', [options.guild])).rows;
+            res = (await this.pool.query('SELECT * FROM files WHERE privacymode=2 AND guild=$1', [options.guild])).rows;
         } else {
             res = (await this.pool.query('SELECT * FROM files')).rows;
         }

@@ -29,10 +29,15 @@ export default class Play extends Command {
     }
 
     public async allowVoice(message: BMessage, args: string[]): Promise<boolean> {
+        if (args.length < 1) {
+            message.warn('please supply an argument', 'example: "play letsgo"');
+            return false;
+        }
         const cmd = await this.client.AudioStorage.fetch(args[0]);
         if (!cmd) {
-            const similar = await this.client.AudioStorage.similarity.bestMatch(args[0]);
-            message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${similar}"?`);
+            message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
+                await this.client.AudioStorage.similarity.bestMatch(args[0])
+                } "?`);
         }
         return !!cmd;
     }

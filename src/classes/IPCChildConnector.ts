@@ -1,4 +1,5 @@
 import { ChildProcess, fork } from 'child_process';
+import EventEmitter from 'events';
 import { Client, ClientSocketStatus } from 'veza';
 
 import { Config } from '../../configs/generalConfig';
@@ -7,12 +8,13 @@ import { logger } from './Logger';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config');
 
-export default class IPCChildConnector {
+export default class IPCChildConnector extends EventEmitter {
     private child: ChildProcess;
     private client: Client;
     private readonly serverLabel: string;
     private _ping: number
     private task: string;
+    private connecting: boolean;
 
     public get connected(): boolean {
         const server = this.client.servers.get(this.serverLabel);
@@ -20,29 +22,49 @@ export default class IPCChildConnector {
     }
 
     public constructor(task: string, serverLabel: any) {
+        super();
         this.task = task;
-        this.client = new Client('MasterProcess');
+        this.client = new Client('MasterProcess', { maximumRetries: 2 });
         this.serverLabel = serverLabel;
+        this.connecting = false;
         this.connect();
     }
 
     private connect(): Promise<void> {
         return new Promise((res, rej): void => {
-            if (this.connected) return res();
+            if (this.connected) {
+                this.client.on('raw', () => res());
+                return;
+            }
+            if (this.connecting) {
+                this.once('connect', () => res());
+                return;
+            }
+
+            this.connecting = true;
             let connected = false;
             // kill the process if its running
-            if (this.child) this.child.kill();
-            // close every connection
-            if (this.client) this.client.servers.forEach((x): boolean => x.disconnect());
+            if (this.child && this.child.connected) this.child.kill();
+
             this.child = fork(`${config.general.subTasks}/${this.task}`);
             logger.debug('[IPC]', `forking new ${this.task} child`);
+
             this.child.once('message', async (e): Promise<void> => {
                 if (e.type !== 'READY_TO_CONNECT') return;
+                this.client.once('ready', (): void => {
+                    logger.debug('[IPC]', `connected to ${this.serverLabel}`);
+                    this.emit('connect');
+                    this.connecting = false;
+                    connected = true;
+                    res();
+                });
+                this.client.once('disconnect', (): void => {
+                    logger.debug('[IPC]', `disconnected from ${this.serverLabel}`);
+                    this.emit('disconnect');
+                    if (!this.connecting) this.connect();
+                });
+                this.child.on('exit', () => this.emit('exit'));
                 await this.client.connectTo(e.data);
-                this.client.on('connect', (): void => logger.debug('[IPC]', `connected to ${this.serverLabel}`));
-                this.client.on('disconnect', (): void => logger.debug('[IPC]', `disconnected from ${this.serverLabel}`));
-                connected = true;
-                res();
             });
             setTimeout((): void => {
                 if (connected) return;
