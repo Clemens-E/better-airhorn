@@ -71,14 +71,16 @@ export default class AudioStorage extends TaskHandler {
      * @returns {Promise<AudioCommand[]>}
      * @memberof AudioStorage
      */
-    public async fetchAll(options?: { includeVotes?: boolean; user?: string; guild?: string }): Promise<AudioCommand[]> {
+    public async fetchAll(options?: { includeVotes?: boolean; user?: string; guild?: string; global?: boolean }): Promise<AudioCommand[]> {
         if (options && options.user && options.guild) throw new Error('option "user" and "guild" can\'t be defined at the same time');
 
         let res: AudioCommand[];
         if (options && options.user) {
-            res = (await this.pool.query('SELECT * FROM files WHERE "user"=$1 AND privacymode=3', [options.user])).rows;
+            res = (await this.pool.query('SELECT * FROM files WHERE "user"=$1', [options.user])).rows;
         } else if (options && options.guild) {
             res = (await this.pool.query('SELECT * FROM files WHERE privacymode=2 AND guild=$1', [options.guild])).rows;
+        } else if (options && options.global) {
+            res = (await this.pool.query('SELECT * FROM files WHERE privacymode=3')).rows;
         } else {
             res = (await this.pool.query('SELECT * FROM files')).rows;
         }

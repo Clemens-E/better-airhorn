@@ -26,7 +26,7 @@ export default class List extends Command {
     public async exec(message: BMessage, args: string[]): Promise<any> {
         let audios: AudioCommand[];
 
-        if (args.length === 0 || args[0] === 'all') audios = await this.client.AudioStorage.fetchAll({ includeVotes: true });
+        if (args.length === 0 || args[0] === 'all') audios = await this.client.AudioStorage.fetchAll({ includeVotes: true, global: true });
         else if (args[0] === 'mine') audios = await this.client.AudioStorage.fetchAll({ includeVotes: true, user: message.author.id });
         else audios = await this.client.AudioStorage.fetchAll({ includeVotes: true, guild: message.guild.id });
 
