@@ -9,7 +9,7 @@ import { BMessage } from '../models/Message';
 
 let messages = 0;
 let messagesPerSecond = 0;
-setTimeout((): void => {
+setInterval((): void => {
     messagesPerSecond = messages / 10;
     messages = 0;
 }, 10 * 1000);

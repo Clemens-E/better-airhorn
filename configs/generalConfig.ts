@@ -23,6 +23,7 @@ interface Emojis {
     done: string;
     offline: string;
     online: string;
+    import: string;
 }
 
 //* ~~~~~~~~~~~~ Audio Settings ~~~~~~~~~~~ //

@@ -27,6 +27,7 @@ module.exports = {
         crashed: '<:crashed:589476154201866243>',
         offline: '<:offline:596443669280587776>',
         online: '<:online:596442525636624409>',
+        import: '622185134900248578',
     },
 
     general: {
