@@ -67,6 +67,7 @@
         "snyk": "^1.221.1",
         "string-similarity": "^3.0.0",
         "typescript": "^3.6.2",
+        "typescript-estree": "^18.1.0",
         "veza": "^1.0.0",
         "zlib-sync": "^0.1.5"
     },

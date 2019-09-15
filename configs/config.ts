@@ -11,11 +11,11 @@ module.exports = {
     },
 
     audio: {
-        bitrate: 320,
+        bitrate: 144,
         storage: path.normalize(`${process.cwd()}/storage`),
         musicFolder: path.normalize(`${process.cwd()}/music`),
         maxRecordTime: 20,
-        maxFileSize: sizeParser('50MB'),
+        maxFileSize: sizeParser('15MB'),
         maxFolderSize: sizeParser('100GB'),
     },
 

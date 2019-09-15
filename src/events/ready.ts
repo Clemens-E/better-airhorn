@@ -4,11 +4,7 @@ import fetch, { Response } from 'node-fetch';
 
 let counter = 0;
 module.exports = (client: BClient): void => {
-    client.AudioStorage.fetchAll().then((r): void =>
-        r.forEach((x): Promise<boolean> => client.AudioStorage.similarity.add(x.commandname))
-    );
     console.log(`ready as ${client.user.tag}`);
-
 
     function updateStatus(): void {
         const status = [`${client.guilds.size.toLocaleString()} Guilds`, 'Tag me for Info',

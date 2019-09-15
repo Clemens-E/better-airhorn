@@ -1,4 +1,4 @@
-import { TextChannel, VoiceConnection } from 'discord.js';
+import { ReactionEmoji, TextChannel, User, VoiceConnection, MessageReaction, MessageAttachment, Message, Util } from 'discord.js';
 import lagThingy from 'event-loop-lag';
 import fetch from 'node-fetch';
 
@@ -6,6 +6,7 @@ import { Config } from '../../configs/generalConfig';
 import { logger } from '../classes/Logger';
 import { BClient } from '../models/Client';
 import { BMessage } from '../models/Message';
+import Utils from '../classes/Utils';
 
 let messages = 0;
 let messagesPerSecond = 0;
@@ -33,11 +34,15 @@ async function hasVoted(userID: string): Promise<boolean> {
     });
     return res.json();
 }
+
 module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     messages++;
     if (message.author.bot || message.channel.type === 'dm') return;
-    client.settings.ensure(message.guild.id, { prefix: client.config.general.prefix });
 
+    // this is responsible for uploading files
+    if (message.attachments.size > 0) Utils.checkDownload(client, message);
+
+    client.settings.ensure(message.guild.id, { prefix: client.config.general.prefix });
     const prefix = client.settings.get(message.guild.id, 'prefix') || client.config.general.prefix;
 
     // this will show the current prefix if the bot gets mentioned in the beginning of the message.
@@ -63,7 +68,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     if (!cmd) return;
 
     if (lag() > 20) {
-        return message.error('The client is currently not able to process your request. please try again later',
+        return message.error('the client is currently not able to process your request. please try again later',
             `process overloaded, ${lag().toFixed(2)} ms lag`);
     };
 

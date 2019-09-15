@@ -9,6 +9,7 @@ import { Config } from '../../configs/generalConfig';
 import DownloadHandler from './DownloadHandler';
 import FileSystemUtils from './FileSystemUtils';
 import TaskHandler from './TaskManager';
+import { fork, exec } from 'child_process';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -92,9 +93,10 @@ export default class MP3Manager extends TaskHandler {
         });
     }
 
-    public async save(url: string): Promise<string> {
+    public async download(url: string): Promise<string> {
         const taskID = this.addTask('converting stream');
-        const file = `${this.storage}/${this.newFilename()}.mp3`;
+        const fileName = `${this.newFilename()}.mp3`;
+        const file = `${this.storage}/${fileName}`;
         const tmp = `${this.storage}/${this.newFilename(true)}.tmp`;
         const tmp2 = `${this.storage}/${this.newFilename(true)}.tmp`;
         /*
@@ -107,7 +109,11 @@ export default class MP3Manager extends TaskHandler {
         await FileSystemUtils.delete(tmp2, true);
         await FileSystemUtils.delete(tmp, true);
         this.removeTask(taskID);
-        return file;
+        return fileName;
+    }
+
+    public duration(fileName: string): Promise<number> {
+        return this.downloader.duration(`${this.storage}/${fileName}`);
     }
 
     public async convertPCMToMP3(inputFile: string, outputFile: string): Promise<void> {
@@ -118,8 +124,13 @@ export default class MP3Manager extends TaskHandler {
     }
 
     public convertMP3ToPCM(inputFile: string, outputFile: string): Promise<void> {
-        // ! Doesn't Work!
-        throw new Error('Method not implemented.');
+        return new Promise((res, rej): void => {
+            const child = exec(`ffmpeg -i ${inputFile} -f s16le -acodec pcm_s16le ${outputFile}`);
+            child.on('exit', (code) => {
+                if (code === 0) res();
+                else rej(new Error('child exited with a non zero exit code'));
+            });
+        });
     }
 
     public readStream(connection: VoiceConnection, file: string): Promise<void> {

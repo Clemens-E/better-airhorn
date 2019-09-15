@@ -237,4 +237,12 @@ export default class AudioStorage extends TaskHandler {
         this.removeTask(taskID);
         return res;
     }
+
+    public download(url: string): Promise<string> {
+        return this.mp3.download(url);
+    }
+
+    public duration(fileName: string): Promise<number> {
+        return this.mp3.duration(fileName);
+    }
 }
