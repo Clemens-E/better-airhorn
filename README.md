@@ -1,5 +1,5 @@
 # Better Airhorn
-## Record own Audio Clips and create a Soundboard!
+## Upload/Record own Audio Clips and create a Soundboard!
 
 [![Discord Bots](https://discordbots.org/api/widget/status/503996428042108928.svg)](https://discordbots.org/bot/503996428042108928)
 [![Discord Bots](https://discordbots.org/api/widget/servers/503996428042108928.svg?noavatar=true)](https://discordbots.org/bot/503996428042108928)

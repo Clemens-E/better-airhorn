@@ -24,7 +24,7 @@ module.exports = async (client: BClient, event: any): Promise<void> => {
 
     const emojiKey = data.emoji.id || data.emoji.name;
 
-    if (!['👍', '👎', '◀', '▶'].includes(emojiKey)) return;
+    if (!['👍', '👎', '◀', '▶', client.config.emojis.import].includes(emojiKey)) return;
     const message = await channel.messages.fetch(data.message_id);
 
     const reaction = message.reactions.get(emojiKey) || message.reactions.add(data);

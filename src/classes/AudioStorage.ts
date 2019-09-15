@@ -171,7 +171,7 @@ export default class AudioStorage extends TaskHandler {
         }
 
         const name = await this.pool.query('DELETE FROM files WHERE fileName = $1 RETURNING commandname', [fileName]);
-        this.similarity.remove(name.rows[0].commandname);
+        this.similarity.remove(name.rows[0] ? name.rows[0].commandname : '');
         this.removeTask(taskID);
     }
 

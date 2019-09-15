@@ -110,7 +110,9 @@ ${this.ticks}`;
         const reaction: MessageReaction = await message.react(client.config.emojis.import).catch(() => null);
         if (!reaction) return;
         const collector = message.createReactionCollector(
-            (r: ReactionEmoji, u: User) => u.id === message.author.id,
+            (r: MessageReaction, u: User) =>
+                u.id === message.author.id &&
+                r.emoji.id === client.config.emojis.import,
             { time: 1000 * 30 }
         )
             .on('collect', async () => {
