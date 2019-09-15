@@ -41,7 +41,7 @@ export default class List extends Command {
                 `${x.commandname}${' '.repeat(longestName - x.commandname.length)} : [${x.upvotes - x.downvotes}]${
                 ' '.repeat(longestVote - (x.upvotes - x.downvotes).toLocaleString().length)}`).join('\n')
             + '```',
-            'this is limited to 10 entry\'s'
+            'this is limited to 10 entries'
         );
     }
 
