@@ -34,7 +34,7 @@ export default class Help extends Command {
             const categories = this.getCategories();
             let index = 0;
             const inc = (): void => {
-                if (index >= categories.length) {
+                if (index >= categories.length - 1) {
                     index = 0;
                     return;
                 }
