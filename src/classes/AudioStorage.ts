@@ -152,6 +152,7 @@ export default class AudioStorage extends TaskHandler {
         const taskID = this.addTask();
         const r = (await this.pool.query('INSERT INTO files(commandName, fileName, privacyMode, guild, "user") VALUES ($1, $2, $3, $4, $5) RETURNING commandName as name',
             [command.commandname, command.filename, command.privacymode, command.guild, command.user])).rows[0].name;
+        this.similarity.add(command.commandname);
         this.removeTask(taskID);
         return r;
     }
