@@ -100,8 +100,10 @@ export default class MP3Manager extends TaskHandler {
         const tmp = `${this.storage}/${this.newFilename(true)}.tmp`;
         const tmp2 = `${this.storage}/${this.newFilename(true)}.tmp`;
         /*
-        * PCM => MP3 => PCM
-        * This is pure Genius
+        * MP3 (or any other audio format) => PCM => MP3
+        * Why you may ask?
+        * - metadata gets lost
+        * - fixed bitrate which will result in smaller files
         */
         await this.downloader.download(url, tmp);
         await this.convertMP3ToPCM(tmp, tmp2);

@@ -3,7 +3,6 @@ import Command from '../../models/Command';
 import { BMessage } from '../../models/Message';
 
 export default class Invite extends Command {
-    private readonly denyMessage = 'Missing permissions to this Audio';
 
     public constructor(client: BClient) {
         super(client, {

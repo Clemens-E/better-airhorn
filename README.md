@@ -33,12 +33,12 @@ You have 30 Seconds time to react, and as soon as you do, the bot starts downloa
 It will then prompt you to set a name, and privacy
 
 **Recording Files**\
-Use the `recordme \<time\>` command while being in a voice channel.\
-The bot will join your channel, and record *only your* voice for `\<time\>` seconds.\
+Use the `recordme <time>` command while being in a voice channel.\
+The bot will join your channel, and record *only your* voice for `<time>` seconds.\
 It will then prompt you to set a name, and privacy
 
 **Play Sounds**\
-You can now run `play \<time\>` to play your files (or any other public file)\
+You can now run `play <time>` to play your files (or any other public file)\
 After it finished, you can upvote/downvote the file
 
 **List Sounds**\
