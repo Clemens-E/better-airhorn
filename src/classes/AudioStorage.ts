@@ -134,8 +134,8 @@ export default class AudioStorage extends TaskHandler {
      * @async
      */
     public async nameExists(name: string): Promise<boolean> {
-        const names = (await this.pool.query('SELECT commandName FROM files')).rows.map((x): string => x.commandname);
-        return names.includes(name);
+        const names = (await this.pool.query('SELECT * FROM files WHERE commandname=$1', [name])).rows;
+        return names.length > 0;
     }
 
     /**
