@@ -88,8 +88,9 @@ export default class Play extends Command {
                 msg.reactions.removeAll().catch((): null => null)
             );
 
-        await msg.react('👍');
-        await msg.react('👎');
+        msg.react('👍').then(() =>
+            msg.react('👎')
+        ).catch((): null => null);
     }
 }
 
