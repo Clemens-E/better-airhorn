@@ -76,7 +76,7 @@ Vote locked:   ${cmd.voteLock ? 'Yes' : 'No'}`
     }
 
     private getCategories(): string[] {
-        return [... new Set(Array.from(this.client.commands, ([, value]): string => value.category))];
+        return [... new Set(Array.from(this.client.commands, ([, value]): string => value.category))].reverse();
     }
 
     private showCategoryHelp(category: string): MessageEmbed {
