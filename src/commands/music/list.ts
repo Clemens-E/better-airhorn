@@ -1,4 +1,4 @@
-import { AudioCommand } from '../../models/AudioCommand';
+import { AudioCommand } from '../../structures/models/AudioCommand';
 import { BClient } from '../../client/Client';
 import { Command } from '../../structures/Command';
 import { BMessage } from '../../structures/Message';

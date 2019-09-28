@@ -1,7 +1,7 @@
 import { User, VoiceConnection } from 'discord.js';
 import pg from 'pg';
 
-import { AudioCommand } from '../models/AudioCommand';
+import { AudioCommand } from '../structures/models/AudioCommand';
 import { logger } from '../structures/utils/Logger';
 import MP3Manager from './MP3Manager';
 import SimilarityHandler from './SimilarityHandler';
