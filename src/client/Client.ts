@@ -49,7 +49,7 @@ export class BClient extends Client {
     }
 
     public loadModules() {
-        readdir(`${__dirname}/commands/`, {
+        readdir(`${__dirname}/../commands/`, {
             fileFilter: ['*.ts', '*.js'],
         })
             .on('data', (e: any): void => {
@@ -60,7 +60,7 @@ export class BClient extends Client {
             });
     
         let events = 0;
-        readdir(`${__dirname}/events/`, {
+        readdir(`${__dirname}/../events/`, {
             fileFilter: ['*.ts', '*.js'],
         })
             .on('data', (e: any): void => {
