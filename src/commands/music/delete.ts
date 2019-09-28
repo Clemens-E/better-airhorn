@@ -1,6 +1,6 @@
-import { BClient } from '../../models/Client';
-import Command from '../../models/Command';
-import { BMessage } from '../../models/Message';
+import { BClient } from '../../client/Client';
+import { Command } from '../../structures/Command';
+import { BMessage } from '../../structures/Message';
 
 export default class Delete extends Command {
 
@@ -8,7 +8,7 @@ export default class Delete extends Command {
         super(client, {
             name: 'delete',
             category: 'music',
-            description: 'deletes an audio you own',
+            description: 'deletes a clip you own',
 
             userPermissions: [],
             userChannelPermissions: [],
@@ -24,13 +24,12 @@ export default class Delete extends Command {
     public async exec(message: BMessage, args: string[]): Promise<any> {
         const name = args[0];
         const cmd = await this.client.AudioStorage.fetch(name);
-        if (!cmd) {
-            return message.warn(`I can't find an audio named ${name}`, `did you mean "${
-                await this.client.AudioStorage.similarity.bestMatch(name)}"?`);
-        }
-        if (cmd.user !== message.author.id) return message.error('You aren\'t allowed to delete Audios that you don\'t own');
+
+        if (!cmd) return message.warn(`I can't find a clip named ${name}`, `did you mean "${await this.client.AudioStorage.similarity.bestMatch(name)}"?`);
+        if (cmd.user !== message.author.id) return message.error('You aren\'t allowed to delete clips that you don\'t own');
+
         await this.client.AudioStorage.delete(cmd.filename);
-        message.success(`deleted ${cmd.commandname}`);
+        return message.success(`deleted ${cmd.commandname}`);
     }
 }
 

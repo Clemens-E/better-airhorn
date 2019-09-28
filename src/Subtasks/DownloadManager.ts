@@ -1,9 +1,8 @@
 import dur from '@rocka/mp3-duration';
-import { exec } from 'child_process';
 import fs from 'fs';
 import fetch from 'node-fetch';
 import { NodeMessage, Server } from 'veza';
-import { logger } from '../classes/Logger';
+import { logger } from '../structures/utils/Logger';
 
 const srv = new Server('DownloadManager');
 

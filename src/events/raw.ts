@@ -1,13 +1,13 @@
 import { TextChannel } from 'discord.js';
 
-import { BClient } from '../models/Client';
+import { BClient } from '../client/Client';
 
 const events: any = {
     MESSAGE_REACTION_ADD: 'messageReactionAdd',
     MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
 };
-module.exports = async (client: BClient, event: any): Promise<void> => {
 
+module.exports = async (client: BClient, event: any): Promise<void> => {
 
     // ! WILL REJECT EVERY EVENT THAT IS FOR OTHER EMOJIS
     // TODO: EXTEND REACTION COLLECTOR AND REMOVE THIS CRAP

@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
 import { postText } from '../../classes/TextHandler';
-import { BClient } from '../../models/Client';
-import { BMessage } from '../../models/Message';
-import Command from '../../models/Command';
+import { BClient } from '../../client/Client';
+import { BMessage } from '../../structures/Message';
+import { Command } from '../../structures/Command';
 
 
 export default class Eval extends Command {
@@ -60,6 +60,7 @@ export default class Eval extends Command {
                 }],
             }),
         })).json();
+
         if (res.message) return this.clean(res.message);
         if (!!res.stderr && res.stderr.length > 0) return this.clean(res.stderr.split('\n')[4]);
         return this.clean(res.stdout);
@@ -69,6 +70,7 @@ export default class Eval extends Command {
         if (!!text && !!text.constructor && (text.constructor.name == 'Promise' || text.constructor.name == 'WrappedPromise')) {
             text = await text;
         }
+
         if (typeof text !== 'string') {
             text = require('util').inspect(text, {
                 depth: 2,
@@ -82,6 +84,7 @@ export default class Eval extends Command {
             .replace(process.env.GLOTTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.DBLTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.PSQL, '// ---------- NO ---------- //');
+            
         if (text.length > 1500) return postText(text);
         else return `\`\`\`xl\n${text}\n\`\`\``;
     }

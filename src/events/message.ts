@@ -1,19 +1,21 @@
-import { ReactionEmoji, TextChannel, User, VoiceConnection, MessageReaction, MessageAttachment, Message, Util } from 'discord.js';
+import { TextChannel, VoiceConnection } from 'discord.js';
 import lagThingy from 'event-loop-lag';
 import fetch from 'node-fetch';
 
 import { Config } from '../../configs/generalConfig';
-import { logger } from '../classes/Logger';
-import { BClient } from '../models/Client';
-import { BMessage } from '../models/Message';
-import Utils from '../classes/Utils';
+import { logger } from '../structures/utils/Logger';
+import { BClient } from '../client/Client';
+import { BMessage } from '../structures/Message';
+import { Utils } from '../structures/utils/Utils';
 
 let messages = 0;
 let messagesPerSecond = 0;
+
 setInterval((): void => {
     messagesPerSecond = messages / 10;
     messages = 0;
 }, 10 * 1000);
+
 const lag = lagThingy(1000);
 
 // ! Those commands dont exist anymore, they get transformed to play {command}
@@ -82,6 +84,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     const uChannelMissingPerms = channel.permissionsFor(message.member).missing(cmd.userChannelPermissions);
     const myMissingPerms = guild.me.permissions.missing(cmd.botPermissions);
     const myChannelMissingPerms = channel.permissionsFor(message.guild.me).missing(cmd.botChannelPermissions);
+
     if (myChannelMissingPerms.includes('SEND_MESSAGES')) return;
     if (!channel.permissionsFor(guild.me).has('EMBED_LINKS')) return channel.send('please give me the permission `EMBED_LINKS`.\nI need it to send embeds.');
     if (myMissingPerms.length > 0) return message.warn(`I'm missing the following permissions:\`\`\`${myMissingPerms.join('\n')}\`\`\``);
@@ -123,6 +126,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
             usage: [],
         });
     }
+
     client.usage.push(command, {
         time: Date.now(),
         user: message.author.id,
@@ -137,5 +141,5 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
                 e.message);
-        });
+    });
 };

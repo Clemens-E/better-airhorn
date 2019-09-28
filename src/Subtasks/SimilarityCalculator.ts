@@ -1,6 +1,6 @@
 import { Server, NodeMessage } from 'veza';
 import Similar from 'string-similarity';
-import { logger } from '../classes/Logger';
+import { logger } from '../structures/utils/Logger';
 
 const srv = new Server('SimilarityCalculator');
 let commands: string[] = [];

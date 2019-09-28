@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import { Client, ClientSocketStatus } from 'veza';
 
 import { Config } from '../../configs/generalConfig';
-import { logger } from './Logger';
+import { logger } from '../structures/utils/Logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config');

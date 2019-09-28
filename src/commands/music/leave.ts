@@ -1,6 +1,6 @@
-import { BClient } from '../../models/Client';
-import Command from '../../models/Command';
-import { BMessage } from '../../models/Message';
+import { BClient } from '../../client/Client';
+import { Command } from '../../structures/Command';
+import { BMessage } from '../../structures/Message';
 
 export default class Leave extends Command {
 

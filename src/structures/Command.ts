@@ -1,9 +1,9 @@
 import { PermissionString, VoiceConnection } from 'discord.js';
 
-import { BClient } from './Client';
+import { BClient } from '../client/Client';
 import { BMessage } from './Message';
 
-export default abstract class Command {
+export abstract class Command {
 
     //* ~~~~~~~~~~~~ Miscellaneous ~~~~~~~~~~~~ //
     public name: string;
