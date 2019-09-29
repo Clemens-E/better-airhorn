@@ -1,11 +1,10 @@
 import { TextChannel, VoiceConnection } from 'discord.js';
-import lagThingy from 'event-loop-lag';
 import fetch from 'node-fetch';
 
 import { Config } from '../../configs/generalConfig';
-import { logger } from '../structures/utils/Logger';
 import { BClient } from '../client/Client';
 import { BMessage } from '../structures/Message';
+import { logger } from '../structures/utils/Logger';
 import { Utils } from '../structures/utils/Utils';
 
 let messages = 0;
@@ -16,7 +15,6 @@ setInterval((): void => {
     messages = 0;
 }, 10 * 1000);
 
-const lag = lagThingy(1000);
 
 // ! Those commands dont exist anymore, they get transformed to play {command}
 const deprecated = ['airhorn', 'badumtss', 'john', 'letsgo', 'stfu', 'trashman'];
@@ -69,9 +67,9 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
 
     if (!cmd) return;
 
-    if (lag() > 20) {
+    if (client.lag() > 20) {
         return message.error('the client is currently not able to process your request. please try again later',
-            `process overloaded, ${lag().toFixed(2)} ms lag`);
+            `process overloaded, ${client.lag().toFixed(2)} ms lag`);
     };
 
     while (args[0] && args[0][0] === '-') {

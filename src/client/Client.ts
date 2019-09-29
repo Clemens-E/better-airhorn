@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/node';
 import MessageTaskList from 'discord-message-tasks';
 import { Client, ClientOptions } from 'discord.js';
 import enmap from 'enmap';
+import lagThingy from 'event-loop-lag';
 import http from 'http';
 import { Pool } from 'pg';
 import readdir from 'readdirp';
@@ -27,9 +28,11 @@ export class BClient extends Client {
     public pg: Pool;
     public AudioStorage: AudioStorage;
     public taskList: MessageTaskList;
+    public readonly lag: Function;
 
     public constructor(opts: ClientOptions) {
         super(opts);
+        this.lag = lagThingy(1000);
         this.pg = new Pool({
             connectionString: process.env.PSQL,
         });

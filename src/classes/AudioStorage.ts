@@ -119,7 +119,7 @@ export default class AudioStorage extends TaskHandler {
      */
     public async play(connection: VoiceConnection, commandName: string): Promise<void> {
         const taskID = this.addTask();
-        if (!await this.nameExists(commandName)) throw new Error('command does not exist');
+        if (!await this.has(commandName)) throw new Error('command does not exist');
         const file = ((await this.pool.query('SELECT filename FROM files WHERE commandName = $1', [commandName])).rows[0] || []).filename;
         await this.mp3.readStream(connection, file);
         this.removeTask(taskID);
@@ -133,7 +133,7 @@ export default class AudioStorage extends TaskHandler {
      * @memberof AudioStorage
      * @async
      */
-    public async nameExists(name: string): Promise<boolean> {
+    public async has(name: string): Promise<boolean> {
         const names = (await this.pool.query('SELECT * FROM files WHERE commandname=$1', [name])).rows;
         return names.length > 0;
     }

@@ -49,7 +49,7 @@ export class Utils {
                     messages.push(await message.warn('names can\'t be longer than 10 characters', 'please send another name'));
                     return false;
                 }
-                if (await client.AudioStorage.nameExists(value)) {
+                if (await client.AudioStorage.has(value)) {
                     messages.push(await message.warn(`\`${value}\` is already in use`, 'please send another name'));
                     return false;
                 }
