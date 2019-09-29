@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import { Client, ClientSocketStatus } from 'veza';
 
 import { Config } from '../../configs/generalConfig';
-import { logger } from './Logger';
+import { logger } from '../structures/utils/Logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config');
@@ -21,7 +21,7 @@ export default class IPCChildConnector extends EventEmitter {
         return !!server && server.status === ClientSocketStatus.Ready;
     }
 
-    public constructor(task: string, serverLabel: any) {
+    public constructor(task: string, serverLabel: string) {
         super();
         this.task = task;
         this.client = new Client('MasterProcess', { maximumRetries: 2 });

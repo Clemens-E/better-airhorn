@@ -1,7 +1,7 @@
-import { AudioCommand } from '../../models/AudioCommand';
-import { BClient } from '../../models/Client';
-import Command from '../../models/Command';
-import { BMessage } from '../../models/Message';
+import { AudioCommand } from '../../structures/models/AudioCommand';
+import { BClient } from '../../client/Client';
+import { Command } from '../../structures/Command';
+import { BMessage } from '../../structures/Message';
 
 export default class List extends Command {
     private readonly denyMessage = 'Missing permissions to this Audio';
@@ -31,10 +31,13 @@ export default class List extends Command {
         else audios = await this.client.AudioStorage.fetchAll({ includeVotes: true, guild: message.guild.id });
 
         if (audios.length === 0) return message.warn('I couldn\'t find anything');
+
         this.sortByVotes(audios);
         audios.splice(10);
+
         const longestName = audios.map(x => x.commandname).reduce((long, str) => Math.max(long, str.length), 0);
         const longestVote = audios.map(x => (x.upvotes - x.downvotes).toLocaleString()).reduce((long, str) => Math.max(long, str.length), 0);
+
         message.neutral(
             '```css\n' +
             audios.map((x: AudioCommand) =>

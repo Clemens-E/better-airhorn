@@ -1,5 +1,5 @@
-import { BClient } from '../models/Client';
-import { logger } from '../classes/Logger';
+import { BClient } from '../client/Client';
+import { logger } from '../structures/utils/Logger';
 import fetch, { Response } from 'node-fetch';
 
 let counter = 0;
@@ -14,6 +14,7 @@ module.exports = (client: BClient): void => {
         if (counter === status.length) counter = 0;
         client.user.setActivity(status[counter]);
     }
+
     function postStats(): void {
         fetch(`https://discordbots.org/api/bots/${client.user.id}/stats`,
             {
@@ -31,6 +32,5 @@ module.exports = (client: BClient): void => {
     updateStatus();
     client.setInterval(postStats, 10 * 1_000 * 60);
     client.setInterval(updateStatus, 15 * 1_000);
-
 };
 

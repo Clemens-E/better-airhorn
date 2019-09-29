@@ -1,3 +1,4 @@
+import { exec } from 'child_process';
 import id from 'cuid';
 import { VoiceConnection } from 'discord.js';
 import fs from 'fs';
@@ -9,7 +10,6 @@ import { Config } from '../../configs/generalConfig';
 import DownloadHandler from './DownloadHandler';
 import FileSystemUtils from './FileSystemUtils';
 import TaskHandler from './TaskManager';
-import { fork, exec } from 'child_process';
 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

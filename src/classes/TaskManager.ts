@@ -1,7 +1,7 @@
 import id from 'cuid';
 import { promisify } from 'util';
 
-import { Task } from '../models/Task';
+import { Task } from '../structures/models/Task';
 
 
 export default class TaskHandler {
