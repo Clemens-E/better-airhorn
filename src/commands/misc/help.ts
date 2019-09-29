@@ -57,7 +57,7 @@ export default class Help extends Command {
                 .on('collect', (r: MessageReaction): void => {
                     if (r.emoji.name === '▶') inc();
                     else dec();
-                    
+
                     r.users.remove(r.users.last()).catch(() => null);
                     msg.edit(this.showCategoryHelp(categories[index]));
             });
@@ -105,7 +105,7 @@ export default class Help extends Command {
         return Array.from(commands, ([, value]): string => value.name).includes(name);
     }
 
-    private isCategory(name: any): boolean {
+    private isCategory(name: string): boolean {
         return this.getCategories().includes(name);
     }
 }

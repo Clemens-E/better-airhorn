@@ -52,12 +52,12 @@ export default class Record extends Command {
                     privacymode: (pM as (0 | 1 | 2 | 3)), guild: message.guild.id, user: message.author.id,
                     filename: fileName,
                 });
-                
+
                 if (pM === 0) {
                     await message.author.send(new MessageAttachment(`${this.client.config.audio.storage}/${fileName}`));
                     await this.client.AudioStorage.delete(fileName, true);
                 }
-                
+
                 await message.success('I finished converting', `use "${this.client.settings.get(message.guild.id).prefix}play ${name}"`);
                 message.channel.bulkDelete(messages).catch(() => null);
                 voice.disconnect();

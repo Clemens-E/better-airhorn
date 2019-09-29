@@ -1,5 +1,4 @@
 import IPCChildConnector from './IPCChildConnector';
-import { promises } from 'dns';
 
 export default class SimilarityHandler extends IPCChildConnector {
 

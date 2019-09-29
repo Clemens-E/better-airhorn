@@ -1,15 +1,15 @@
 import * as Sentry from '@sentry/node';
 import MessageTaskList from 'discord-message-tasks';
-import { Client, ClientOptions, PresenceData } from 'discord.js';
+import { Client, ClientOptions } from 'discord.js';
 import enmap from 'enmap';
+import http from 'http';
 import { Pool } from 'pg';
 import readdir from 'readdirp';
-import express from 'express';
 
 import { Config } from '../../configs/generalConfig';
 import AudioStorage from '../classes/AudioStorage';
-import { logger } from '../structures/utils/Logger';
 import { Command } from '../structures/Command';
+import { logger } from '../structures/utils/Logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config');
@@ -48,7 +48,7 @@ export class BClient extends Client {
         this.taskList = new MessageTaskList(config.emojis.loading, config.emojis.done);
     }
 
-    public loadModules() {
+    public loadModules(): void {
         readdir(`${__dirname}/../commands/`, {
             fileFilter: ['*.ts', '*.js'],
         })
@@ -58,7 +58,7 @@ export class BClient extends Client {
             .on('end', (): void => {
                 logger.debug(`loaded ${this.commands.size} commands`);
             });
-    
+
         let events = 0;
         readdir(`${__dirname}/../events/`, {
             fileFilter: ['*.ts', '*.js'],
@@ -72,35 +72,30 @@ export class BClient extends Client {
             });
     }
 
-    public async _init() {
-        express().get('/', (req, res) => {
+    public _init(): void {
+        http.createServer((req, res) => {
             const mapped = this.ws.shards.map(x => x.status);
             if (mapped.length === 0) mapped.push(5);
-            res.status(mapped.every(a => a === 0) ? 200 : 500), 
-            res.json(this.ws.shards.map(x => x.status));
+            res.writeHead(
+                mapped.every(a => a === 0) ? 200 : 500, {
+                'Content-Type': 'application/json',
+            });
+            res.write(JSON.stringify(mapped));
             res.end();
         }).listen(3001);
 
         require('appmetrics-dash').monitor({
             port: 8000, console: {
                 log: logger.info,
-                error: logger.error
-            }
+                error: logger.error,
+            },
         });
     }
-    
-    public async start() {
+
+    public start(): void {
         this.loadModules();
-        
-        await this._init();
+
+        this._init();
         this.login(process.env.BTOKEN);
     }
-}
-
-interface BClientOptions {
-    shardCount: string | number;
-    presence: PresenceData,
-    messageCacheLifetime: number;
-    messageSweepInterval: number;
-    messageCacheMaxSize: number;
 }

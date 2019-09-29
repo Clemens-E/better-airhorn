@@ -107,7 +107,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
         }
     }
 
-    //  connect to VoiceChannel, if required by the command  //
+    //  connect to VoiceChannel, if required by the command
     if (cmd.voiceChannel) {
         if (!member.voice.channel) return message.warn('You need to be in a Voice Channel to run this command.');
         if (message.guild.voice && message.guild.voice.connection) return message.warn('I\'m already in a Voice Channel on this Guild.\nIf I\'m stuck, use the `leave` command to get me out');
@@ -141,5 +141,5 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
                 e.message);
-    });
+        });
 };

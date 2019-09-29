@@ -43,6 +43,6 @@ export class BMessage extends Message {
 
 }
 
-Structures.extend('Message', (): any => {
-    return BMessage;
-});
+Structures.extend('Message', (): any =>
+    BMessage
+);

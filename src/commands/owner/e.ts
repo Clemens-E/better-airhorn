@@ -84,7 +84,7 @@ export default class Eval extends Command {
             .replace(process.env.GLOTTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.DBLTOKEN, '// ---------- NO ---------- //')
             .replace(process.env.PSQL, '// ---------- NO ---------- //');
-            
+
         if (text.length > 1500) return postText(text);
         else return `\`\`\`xl\n${text}\n\`\`\``;
     }

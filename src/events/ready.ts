@@ -14,7 +14,7 @@ module.exports = (client: BClient): void => {
         if (counter === status.length) counter = 0;
         client.user.setActivity(status[counter]);
     }
-    
+
     function postStats(): void {
         fetch(`https://discordbots.org/api/bots/${client.user.id}/stats`,
             {

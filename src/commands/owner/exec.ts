@@ -28,7 +28,7 @@ export default class Exec extends Command {
 
     public async exec(message: Message, args: string[]): Promise<any> {
         if (message.author.id !== this.client.config.general.ownerID) return;
-        
+
         exec(args.join(' '), async (error, stdout): Promise<void> => {
             let output = (error || stdout) as string;
             if (output.length < 2000) output = `\`\`\`asciidoc\n${output}\`\`\``;

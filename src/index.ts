@@ -4,7 +4,7 @@ import { BMessage } from './structures/Message';
 import 'dotenv/config';
 
 BMessage;
-(async function() {
+(async (): Promise<void> => {
     const client = new BClient({
         shardCount: await Util.fetchRecommendedShards(process.env.BTOKEN, 1000),
         presence: {

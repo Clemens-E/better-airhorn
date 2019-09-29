@@ -37,7 +37,7 @@ export default class List extends Command {
 
         const longestName = audios.map(x => x.commandname).reduce((long, str) => Math.max(long, str.length), 0);
         const longestVote = audios.map(x => (x.upvotes - x.downvotes).toLocaleString()).reduce((long, str) => Math.max(long, str.length), 0);
-        
+
         message.neutral(
             '```css\n' +
             audios.map((x: AudioCommand) =>

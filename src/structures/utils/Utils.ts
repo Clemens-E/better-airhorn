@@ -24,6 +24,7 @@ export class Utils {
                     variable = undefined;
                     return;
                 }
+                if (variable) collector.stop();
             });
             collector.on('end', async () => {
                 if (!variable) rej(new Error('no variable in time provided or cancelled'));
@@ -41,7 +42,7 @@ export class Utils {
             async (m: BMessage, value: string): Promise<boolean> => {
                 messages.push(m);
                 if (value.includes(' ')) {
-                    messages.push(await m.warn('spaces in namees are not allowed','please send another name'));
+                    messages.push(await m.warn('spaces in names are not allowed', 'please send another name'));
                     return false;
                 }
                 if (value.length > 10) {
@@ -54,7 +55,7 @@ export class Utils {
                 }
 
                 return true;
-        });
+            });
     }
 
     static async promptPrivacyMode(client: BClient, message: BMessage, messages: Message[]): Promise<string> {
@@ -77,37 +78,37 @@ export class Utils {
             [${replies[3]}]
             **__Everyone__** will be able to play this clip. By choosing this, you allow me to save this clip to my file system.
             ${this.ticks}`;
-        
-            const msg = await message.channel.send(
-                new MessageEmbed()
-                    .setTitle('What am I supposed to do with the file?')
-                    .setDescription(infoMsg),
-            );
 
-            messages.push(msg);
-            return Utils.promptMessage(msg, msg.channel, 30 * 1000 * 60,
-                (m: Message): boolean => m.author.id === message.author.id,
-                async (m: BMessage): Promise<boolean> => {
-                    messages.push(m);
-                    if (!replies.includes(m.content)){
-                        messages.push(await message.channel.send(`Please send a valid mode: \`${replies.join('` or `')}`));
-                        return false;
-                    }
+        const msg = await message.channel.send(
+            new MessageEmbed()
+                .setTitle('What am I supposed to do with the file?')
+                .setDescription(infoMsg),
+        );
 
-                    return true;
+        messages.push(msg);
+        return Utils.promptMessage(msg, msg.channel, 30 * 1000 * 60,
+            (m: Message): boolean => m.author.id === message.author.id,
+            async (m: BMessage): Promise<boolean> => {
+                messages.push(m);
+                if (!replies.includes(m.content)) {
+                    messages.push(await message.channel.send(`Please send a valid mode: \`${replies.join('` or `')}\``));
+                    return false;
+                }
+
+                return true;
             });
     }
 
     public static async checkDownload(client: BClient, message: BMessage): Promise<void> {
-        if((message.channel as TextChannel).permissionsFor(message.guild.me).missing(['ADD_REACTIONS', 'SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS']).length > 0) return;
+        if ((message.channel as TextChannel).permissionsFor(message.guild.me).missing(['ADD_REACTIONS', 'SEND_MESSAGES', 'USE_EXTERNAL_EMOJIS']).length > 0) return;
 
         const attachment = message.attachments.find((x: MessageAttachment) =>
             ['.mp3', '.m4a', '.ogg', '.wav'].includes(x.name.slice(-4)) && x.size < client.config.audio.maxFileSize);
         if (!attachment) return;
 
-        const reaction: MessageReaction = await message.react(client.config.emojis.import).catch((): any => null);
+        const reaction: MessageReaction = await message.react(client.config.emojis.import).catch((): null => null);
         if (!reaction) return;
-        
+
         const collector = message.createReactionCollector(
             (r: MessageReaction, u: User) =>
                 u.id === message.author.id &&
@@ -118,7 +119,7 @@ export class Utils {
                 collector.stop();
                 const messagesToDelete: Message[] = [];
                 const msg = await message.neutral(`${client.config.emojis.loading} please wait while I download and convert your file`);
-                const fileName = await client.AudioStorage.download(message.attachments.first().url).catch((): any => null);
+                const fileName = await client.AudioStorage.download(message.attachments.first().url).catch((): null => null);
                 if (!fileName) return message.error('something went wrong while downloading or converting', 'make sure it\'s a valid audio file');
 
                 const duration = await client.AudioStorage.duration(fileName);
@@ -132,13 +133,13 @@ export class Utils {
                 }
 
                 msg.delete();
-                const pM = client.AudioStorage.encodePrivacyMode(await Utils.promptPrivacyMode(client, message, messagesToDelete).catch((): any => null));
+                const pM = client.AudioStorage.encodePrivacyMode(await Utils.promptPrivacyMode(client, message, messagesToDelete).catch((): null => null));
                 if (pM === undefined) {
                     await client.AudioStorage.delete(fileName, true);
                     return;
                 }
 
-                const name = await Utils.promptName(client, message, messagesToDelete).catch((): any => null);
+                const name = await Utils.promptName(client, message, messagesToDelete).catch((): null => null);
                 if (!name) {
                     await client.AudioStorage.delete(fileName, true);
                     return;
@@ -149,7 +150,7 @@ export class Utils {
                     privacymode: (pM as (0 | 1 | 2 | 3)),
                     guild: message.guild.id,
                     user: message.author.id,
-                    filename: fileName
+                    filename: fileName,
                 });
 
                 if (pM === 0) {
@@ -158,10 +159,10 @@ export class Utils {
                 }
 
                 await message.success('I finished converrting', `use "${client.settings.get(message.guild.id).prefix}play ${name}"`);
-                message.channel.bulkDelete(messagesToDelete).catch((): any => null);
-        }).on('end', () => {
+                message.channel.bulkDelete(messagesToDelete).catch((): null => null);
+            }).on('end', () => {
                 reaction.users.remove(client.user)
-                    .catch((): any => null);
-        });
+                    .catch((): null => null);
+            });
     }
 }

@@ -99,7 +99,7 @@ export default class Stats extends Command {
                 mostUsedCommand.usage = v.usage.length;
             }
         });
-        
+
         return { used: commandsUsed, mostUsed: mostUsedCommand };
     }
 }

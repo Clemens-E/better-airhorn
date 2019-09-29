@@ -38,7 +38,7 @@ export default class Play extends Command {
         if (!cmd) {
             message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
                 await this.client.AudioStorage.similarity.bestMatch(args[0])
-            }"?`);
+                }"?`);
         }
 
         return !!cmd;
@@ -78,21 +78,22 @@ export default class Play extends Command {
                 if (r.emoji.name === '👍') {
                     this.client.AudioStorage.upvote(r.users.last().id, cmd.commandname)
                         .then((): Promise<Message> => message.success(`👍 upvoted \`${cmd.commandname}\``))
-                        .catch((): any => null);
+                        .then(m => m.delete({ timeout: 5 * 1000 }).catch((): null => null))
+                        .catch((): null => null);
                 } else {
                     this.client.AudioStorage.downvote(r.users.last().id, cmd.commandname)
-                        .then((): Promise<Message> => message.success(`👎 downvoted \`${cmd.commandname}\``))
-                        .catch((): any => null);
+                        .then((): Promise<Message> => message.success(`👎 downvoted \`${cmd.commandname}\``)
+                            .then(m => m.delete({ timeout: 5 * 1000 }).catch((): null => null)))
+                        .catch((): null => null);
                 }
             })
             .on('end', (): Promise<Message> | null =>
-                // We dont care for that error, only if we ever get rate limited for doing it.
-                msg.reactions.removeAll().catch((): any => null)
-        );
+                msg.delete().catch((): null => null)
+            );
 
         msg.react('👍').then(() =>
             msg.react('👎')
-        ).catch((): any => null);
+        ).catch((): null => null);
     }
 }
 

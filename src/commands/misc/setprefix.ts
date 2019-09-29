@@ -26,7 +26,7 @@ export default class SetPrefix extends Command {
     public async exec(message: BMessage, args: string[]): Promise<any> {
         const prefix = args.join(' ');
         if (prefix.length > 10) return message.warn(`Your desired prefix is ${prefix.length} characters long`, 'Prefixes can\'t be longer than 10 characters');
-        
+
         this.client.settings.set(message.guild.id, prefix, 'prefix');
         message.success('Successfully updated your prefix!', `Your new prefix is ${prefix}`);
     }
