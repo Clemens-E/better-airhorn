@@ -52,7 +52,7 @@ export default class Play extends Command {
             return message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
                 await this.client.AudioStorage.similarity.bestMatch(args[0])}"?`);
         }
-
+        if (message.deletable) message.delete().catch((): null => null);
 
         switch (cmd.privacymode) {
             case 1:

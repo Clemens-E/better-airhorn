@@ -39,7 +39,7 @@ export default class Eval extends Command {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { channel, guild, author } = message;
         try {
-            evaled = await eval(code);
+            evaled = await eval(`(async ()=>{ return (${code});})();`);
         } catch (err) {
             evaled = err.message;
         }

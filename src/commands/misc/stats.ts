@@ -1,15 +1,15 @@
-import { MessageEmbed, version } from 'discord.js';
+import {stripIndents} from 'common-tags';
+import {MessageEmbed, version} from 'discord.js';
 import moment from 'moment';
+import 'moment-duration-format';
 import fetch from 'node-fetch';
 import os from 'os';
+import {Config} from '../../../configs/generalConfig';
+import {BClient} from '../../client/Client';
+import {Command} from '../../structures/Command';
+import {BMessage} from '../../structures/Message';
 
-import { Config } from '../../../configs/generalConfig';
-import { BClient } from '../../client/Client';
-import { Command } from '../../structures/Command';
-import { BMessage } from '../../structures/Message';
 
-import 'moment-duration-format';
-import { stripIndents } from 'common-tags';
 
 export default class Stats extends Command {
     private readonly ticks = '```';
@@ -72,7 +72,8 @@ export default class Stats extends Command {
             `)
             .addField('**> Shards**', shards)
             .addField('**> Other Services**', stripIndents`
-                [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL, this.client.config)}`)
+                [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL, this.client.config)}
+                [Status Page & Planned Downtimes](${this.client.config.general.statusPage})`)
             .setFooter(
                 `Developer & Owner: ${(await this.client.users.fetch(this.client.config.general.ownerID).catch((): { tag: string } => ({ tag: '' }))).tag}`);
 

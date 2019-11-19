@@ -35,6 +35,7 @@ module.exports = {
         prefix: '$',
         voteURL: 'https://webhooks.chilo.space/better-airhorn',
         subTasks: path.normalize(`${__dirname}/../src/Subtasks`),
-        supportServer: 'https://discordapp.com/invite/5m7Xss3',
+        supportServer: 'https://discord.gg/5bfhkJ3',
+        statusPage: 'https://chilo.space/service/better-airhorn'
     },
 };

@@ -43,4 +43,5 @@ interface General {
     voteURL: string;
     subTasks: string;
     supportServer: string;
+    statusPage: string;
 }
