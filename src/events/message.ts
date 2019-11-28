@@ -1,16 +1,16 @@
-import {TextChannel, VoiceConnection} from 'discord.js';
+import { TextChannel, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
-import {Config} from '../../configs/generalConfig';
-import {BClient} from '../client/Client';
-import {CustomError} from '../structures/CustomError';
-import {BMessage} from '../structures/Message';
-import {logger} from '../structures/utils/Logger';
-import {Utils} from '../structures/utils/Utils';
+import { Config } from '../../configs/generalConfig';
+import { BClient } from '../client/Client';
+import { CustomError } from '../structures/CustomError';
+import { BMessage } from '../structures/Message';
+import { logger } from '../structures/utils/Logger';
+import { Utils } from '../structures/utils/Utils';
 
 
 let messages = 0;
 let messagesPerSecond = 0;
-
+const catcher = (): null => null;
 setInterval((): void => {
     messagesPerSecond = messages / 10;
     messages = 0;
@@ -42,6 +42,8 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
 
     // this is responsible for uploading files
     if (message.attachments.size > 0) Utils.checkDownload(client, message);
+
+    if (!(message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) return;
 
     client.settings.ensure(message.guild.id, { prefix: client.config.general.prefix });
     const prefix = client.settings.get(message.guild.id, 'prefix') || client.config.general.prefix;

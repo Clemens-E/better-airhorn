@@ -1,14 +1,13 @@
-import {stripIndents} from 'common-tags';
-import {MessageEmbed, version} from 'discord.js';
+import { stripIndents } from 'common-tags';
+import { MessageEmbed, version } from 'discord.js';
 import moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
 import os from 'os';
-import {Config} from '../../../configs/generalConfig';
-import {BClient} from '../../client/Client';
-import {Command} from '../../structures/Command';
-import {BMessage} from '../../structures/Message';
-
+import { Config } from '../../../configs/generalConfig';
+import { BClient } from '../../client/Client';
+import { Command } from '../../structures/Command';
+import { BMessage } from '../../structures/Message';
 
 
 export default class Stats extends Command {

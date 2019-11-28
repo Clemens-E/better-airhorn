@@ -1,9 +1,9 @@
+import { stripIndents } from 'common-tags';
 import { MessageEmbed, MessageReaction, User } from 'discord.js';
-
 import { BClient } from '../../client/Client';
 import { Command } from '../../structures/Command';
 import { BMessage } from '../../structures/Message';
-import { stripIndents } from 'common-tags';
+
 
 export default class Help extends Command {
 
@@ -17,7 +17,7 @@ export default class Help extends Command {
             userChannelPermissions: [],
 
             botPermissions: [],
-            botChannelPermissions: ['SEND_MESSAGES'],
+            botChannelPermissions: ['SEND_MESSAGES',  'ADD_REACTIONS'],
 
             voiceChannel: false,
             voteLock: false,
@@ -91,13 +91,13 @@ export default class Help extends Command {
             .setTitle(`Help for ${category}`)
             .setColor(this.client.config.colors.neutral)
             .setDescription(cate.map((cmd): string => stripIndents`
-                **${cmd.name}**                
+                **${cmd.name}**
                 Name:          ${cmd.name}
                 Description:   ${cmd.description}
                 Example:      \`${cmd.example || 'none'}\`
                 Category:      ${cmd.category}
                 Voice Command: ${cmd.voteLock ? 'Yes' : 'No'}
-                Vote locked:   ${cmd.voteLock ? 'Yes' : 'No'}`
+                Vote locked:   ${cmd.voteLock ? 'Yes' : 'No'}`,
             ).join('\n\n'));
     }
 
