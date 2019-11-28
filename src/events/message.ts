@@ -1,11 +1,12 @@
-import { TextChannel, VoiceConnection } from 'discord.js';
+import {TextChannel, VoiceConnection} from 'discord.js';
 import fetch from 'node-fetch';
+import {Config} from '../../configs/generalConfig';
+import {BClient} from '../client/Client';
+import {CustomError} from '../structures/CustomError';
+import {BMessage} from '../structures/Message';
+import {logger} from '../structures/utils/Logger';
+import {Utils} from '../structures/utils/Utils';
 
-import { Config } from '../../configs/generalConfig';
-import { BClient } from '../client/Client';
-import { BMessage } from '../structures/Message';
-import { logger } from '../structures/utils/Logger';
-import { Utils } from '../structures/utils/Utils';
 
 let messages = 0;
 let messagesPerSecond = 0;
@@ -73,7 +74,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     };
 
     while (args[0] && args[0][0] === '-') {
-        message.flags.push(args.shift().slice(1));
+        message.commandFlags.push(args.shift().slice(1));
     }
 
 
@@ -134,6 +135,11 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     // Hah, rejections? Thats what I get!
     cmd.exec(message, args, voiceConnection)
         .catch((e: Error): void => {
+            const error = e as CustomError;
+            error.author = author.id;
+            error.discordMessage = message.content;
+            error.channel = channel.id;
+
             if (process.env.NODE_ENV === 'production') client.sentry.captureException(e);
             logger.error(`${cmd.name} crashed: ${e.message}`, e.stack);
             message.error(`

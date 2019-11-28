@@ -1,15 +1,15 @@
-import { Message, Client, TextChannel, MessageEmbed, Structures } from 'discord.js';
+import { Client, Message, MessageEmbed, Structures, TextChannel } from 'discord.js';
 import { Config } from '../../configs/generalConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const config: Config = require('../../configs/config');
 
 export class BMessage extends Message {
-    public flags: string[];
+    public commandFlags: string[];
 
     public constructor(client: Client, data: object, channel: TextChannel) {
         super(client, data, channel);
-        this.flags = [];
+        this.commandFlags = [];
     }
 
     public error(description: string, footer?: string): Promise<Message> {
