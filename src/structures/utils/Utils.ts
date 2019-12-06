@@ -45,8 +45,8 @@ export class Utils {
                     messages.push(await m.warn('spaces in names are not allowed', 'please send another name'));
                     return false;
                 }
-                if (value.length > 10) {
-                    messages.push(await message.warn('names can\'t be longer than 10 characters', 'please send another name'));
+                if (value.length > 20) {
+                    messages.push(await message.warn('names can\'t be longer than 20 characters', 'please send another name'));
                     return false;
                 }
                 if (await client.AudioStorage.has(value)) {
@@ -113,7 +113,7 @@ export class Utils {
             (r: MessageReaction, u: User) =>
                 u.id === message.author.id &&
                 r.emoji.id === client.config.emojis.import,
-            { time: 1000 * 30 }
+            { time: 1000 * 30 },
         )
             .on('collect', async () => {
                 collector.stop();
@@ -158,7 +158,7 @@ export class Utils {
                     await client.AudioStorage.delete(fileName, true);
                 }
 
-                await message.success('I finished converrting', `use "${client.settings.get(message.guild.id).prefix}play ${name}"`);
+                await message.success('I finished converting', `use "${client.settings.get(message.guild.id).prefix}play ${name}"`);
                 message.channel.bulkDelete(messagesToDelete).catch((): null => null);
             }).on('end', () => {
                 reaction.users.remove(client.user)
