@@ -70,7 +70,7 @@
     "node-opus": "^0.3.3",
     "pg": "^7.14.0",
     "readdirp": "^3.2.0",
-    "snyk": "^1.256.0",
+    "snyk": "^1.258.2",
     "string-similarity": "^3.0.0",
     "typescript": "^3.7.3",
     "typescript-estree": "^18.1.0",
