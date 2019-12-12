@@ -1,6 +1,5 @@
 import { User, VoiceConnection } from 'discord.js';
 import pg from 'pg';
-
 import { AudioCommand } from '../structures/models/AudioCommand';
 import { logger } from '../structures/utils/Logger';
 import MP3Manager from './MP3Manager';
@@ -32,7 +31,7 @@ export default class AudioStorage extends TaskHandler {
         this.similarity.on('connect', async () => {
             await this.similarity.clear();
             this.fetchAll().then((r): void =>
-                r.forEach((x): Promise<boolean> => this.similarity.add(x.commandname))
+                r.forEach((x): Promise<boolean> => this.similarity.add(x.commandname)),
             );
         });
     }
@@ -95,6 +94,23 @@ export default class AudioStorage extends TaskHandler {
             });
         }
         return (await this.pool.query('SELECT * FROM files')).rows;
+    }
+
+    public async random(): Promise<AudioCommand> {
+      let cmd: AudioCommand;
+      let date = Date.now();
+      let tries = 0;
+      while (!cmd) {
+        tries++;
+        if (tries > 10) throw new Error('Took to many tries');
+        date -= (60 * 1000) * 60 * 48;
+        const command: AudioCommand[] = (await this.pool.query('SELECT * FROM files WHERE commandname=(SELECT command FROM votes WHERE upvote=true AND time>$1 ORDER BY random() LIMIT 1)', [date])).rows;
+        if (command.length > 0) {
+          if (command[0].privacymode !== 3) continue;
+          cmd = command[0];
+        }
+      }
+      return cmd;
     }
 
     /**

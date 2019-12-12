@@ -39,7 +39,9 @@ It will then prompt you to set a name, and privacy mode.
 
 **Play Sounds**\
 You can now run `play <time>` to play your files (or any other public file)\
+To discover new files, try running `random`
 After it finished, you can upvote/downvote the file
+
 
 **List Sounds**\
 If you want to see a list of the most upvoted audios, you can do

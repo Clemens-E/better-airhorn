@@ -4,14 +4,14 @@ import { Command } from '../../structures/Command';
 import { BMessage } from '../../structures/Message';
 
 
-export default class Play extends Command {
+export default class Random extends Command {
 
     public constructor(client: BClient) {
         super(client, {
-            name: 'play',
+            name: 'random',
             category: 'music',
-            example: 'play mayo',
-            description: 'plays an audio file',
+            example: 'random',
+            description: 'plays a random audio file',
 
             userPermissions: [],
             userChannelPermissions: [],
@@ -24,49 +24,9 @@ export default class Play extends Command {
         });
     }
 
-    private reject(msg: BMessage): Promise<Message> {
-        return msg.error('Missing permissions to this Audio');
-    }
-
-    public async allowVoice(message: BMessage, args: string[]): Promise<boolean> {
-        if (args.length < 1) {
-            message.warn('please supply an argument', 'example: "play letsgo"');
-            return false;
-        }
-
-        const cmd = await this.client.AudioStorage.fetch(args[0]);
-        if (!cmd) {
-            message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
-                await this.client.AudioStorage.similarity.bestMatch(args[0])
-                }"?`);
-        }
-
-        return !!cmd;
-    }
-
-    public async exec(message: BMessage, args: string[], voice: VoiceConnection): Promise<any> {
-        const { author, guild } = message;
-
-        const cmd = await this.client.AudioStorage.fetch(args[0]);
-        if (!cmd) {
-            return message.warn(`I cant find an audio named ${args[0]}`, `did you mean "${
-                await this.client.AudioStorage.similarity.bestMatch(args[0])}"?`);
-        }
-        if (message.deletable) message.delete().catch((): null => null);
-
-        switch (cmd.privacymode) {
-            case 1:
-                if (author.id !== cmd.user) return this.reject(message);
-                break;
-            case 2:
-                if (author.id !== cmd.user && guild.id !== cmd.guild) return this.reject(message);
-                break;
-            case 3:
-                break;
-            default:
-                throw new Error(`This should ** never ** happen, if this persists please report it in the support server.
-                DEBUG INFO: Privacy Mode = ${cmd.privacymode} `);
-        }
+    public async exec(message: BMessage, _args: string[], voice: VoiceConnection): Promise<any> {
+        const cmd = await this.client.AudioStorage.random().catch((): null =>null);
+        if (!cmd) return message.warn('I did not find any Audio that is suitable.');
 
         await this.client.AudioStorage.play(voice, cmd.commandname);
         voice.disconnect();
