@@ -69,7 +69,7 @@
     "node-lame": "^1.2.0",
     "node-opus": "^0.3.3",
     "pg": "^7.14.0",
-    "readdirp": "^3.2.0",
+    "readdirp": "^3.3.0",
     "snyk": "^1.259.0",
     "string-similarity": "^3.0.0",
     "typescript": "^3.7.3",
