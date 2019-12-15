@@ -54,7 +54,7 @@
     "cron": "^1.7.2",
     "cuid": "^2.1.6",
     "discord-message-tasks": "^1.0.5",
-    "discord.js": "github:vladfrangu/discOwOd.js#sharding-cleanup",
+    "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "enmap": "^5.2.3",
     "eslint": "^6.7.2",
