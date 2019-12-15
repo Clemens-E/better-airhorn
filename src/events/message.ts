@@ -142,7 +142,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
             error.discordMessage = message.content;
             error.channel = channel.id;
 
-            if (process.env.NODE_ENV === 'production') client.sentry.captureException(e);
+            if (process.env.NODE_ENV === 'production') client.sentry.captureException(error);
             logger.error(`${cmd.name} crashed: ${e.message}`, e.stack);
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
