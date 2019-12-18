@@ -2,7 +2,6 @@ import { TextChannel, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
 import { Config } from '../../configs/generalConfig';
 import { BClient } from '../client/Client';
-import { CustomError } from '../structures/CustomError';
 import { BMessage } from '../structures/Message';
 import { logger } from '../structures/utils/Logger';
 import { Utils } from '../structures/utils/Utils';
@@ -134,15 +133,23 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
         guild: guild.id,
     }, 'usage', true);
 
-    // Hah, rejections? Thats what I get!
     cmd.exec(message, args, voiceConnection)
         .catch((e: Error): void => {
-            const error = e as CustomError;
-            error.author = author.id;
-            error.discordMessage = message.content;
-            error.channel = channel.id;
-
-            if (process.env.NODE_ENV === 'production') client.sentry.captureException(error);
+            if (process.env.NODE_ENV === 'production') {
+              client.sentry.withScope(function (scope: any) {
+                scope.addEventProcessor(function (event: any) {
+                  event.breadcrumbs = [
+                    { author:author.id },
+                    { discordMessage:message.content },
+                    { guild:guild.id },
+                    { channel:channel.id },
+                    { command:cmd.name },
+                  ];
+                  return event;
+                });
+                client.sentry.captureException(e);
+              });
+            }
             logger.error(`${cmd.name} crashed: ${e.message}`, e.stack);
             message.error(`
             ${client.config.emojis.crashed} ${cmd.name} crashed.\nIf the problem consists please report it [here](${client.config.general.supportServer} \'Support Server\')`,
