@@ -16,6 +16,7 @@ BMessage;
         messageCacheLifetime: 120,
         messageSweepInterval: 60,
         messageCacheMaxSize: 20,
+        disabledEvents:['TYPING_START'],
     });
 
     client.start();
