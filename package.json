@@ -72,7 +72,7 @@
     "readdirp": "^3.3.0",
     "snyk": "^1.265.0",
     "string-similarity": "^3.0.0",
-    "typescript": "^3.7.3",
+    "typescript": "^3.7.4",
     "typescript-estree": "^18.1.0",
     "veza": "^1.1.0",
     "zlib-sync": "^0.1.6"
