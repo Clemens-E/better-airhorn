@@ -1,7 +1,7 @@
-import { Message, MessageReaction, User, VoiceConnection } from 'discord.js';
-import { BClient } from '../../client/Client';
-import { Command } from '../../structures/Command';
-import { BMessage } from '../../structures/Message';
+import {Message, MessageReaction, User, VoiceConnection} from 'discord.js';
+import {BClient} from '../../client/Client';
+import {Command} from '../../structures/Command';
+import {BMessage} from '../../structures/Message';
 
 
 export default class Random extends Command {
@@ -25,7 +25,7 @@ export default class Random extends Command {
     }
 
     public async exec(message: BMessage, _args: string[], voice: VoiceConnection): Promise<any> {
-        const cmd = await this.client.AudioStorage.random().catch((): null =>null);
+        const cmd = await this.client.AudioStorage.random().catch((): null => null);
         if (!cmd) return message.warn('I did not find any Audio that is suitable.');
 
         await this.client.AudioStorage.play(voice, cmd.commandname);
@@ -51,7 +51,7 @@ export default class Random extends Command {
                 msg.delete().catch((): null => null),
             );
 
-        msg.react('👍').then(() =>
+        await msg.react('👍').then(() =>
             msg.react('👎'),
         ).catch((): null => null);
     }

@@ -1,7 +1,7 @@
-import { Message, MessageReaction, User, VoiceConnection } from 'discord.js';
-import { BClient } from '../../client/Client';
-import { Command } from '../../structures/Command';
-import { BMessage } from '../../structures/Message';
+import {Message, MessageReaction, User, VoiceConnection} from 'discord.js';
+import {BClient} from '../../client/Client';
+import {Command} from '../../structures/Command';
+import {BMessage} from '../../structures/Message';
 
 
 export default class Play extends Command {
@@ -91,7 +91,7 @@ export default class Play extends Command {
                 msg.delete().catch((): null => null),
             );
 
-        msg.react('👍').then(() =>
+        await msg.react('👍').then(() =>
             msg.react('👎'),
         ).catch((): null => null);
     }

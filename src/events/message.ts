@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { TextChannel, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
 import { Config } from '../../configs/generalConfig';
@@ -48,7 +49,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     const prefix = client.settings.get(message.guild.id, 'prefix') || client.config.general.prefix;
 
     // this will show the current prefix if the bot gets mentioned in the beginning of the message.
-    if (new RegExp(`^(<@!?${client.user.id}>)`).test(message.content)) { message.neutral(`Prefix on this Guild: \`${prefix}\``); }
+    if (new RegExp(`^(<@!?${client.user.id}>)`).test(message.content)) {message.neutral(`Prefix on this Guild: \`${prefix}\``);}
 
     if (message.content.indexOf(prefix) !== 0) return;
 
@@ -96,7 +97,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     if (cmd.voteLock) {
         const voted = await hasVoted(author.id).catch((): void => null);
         if (voted === null) {
-            if (process.env.NODE_ENV === 'production') client.sentry.captureException(new Error('failed to fetch votes'));
+            if (process.env.NODE_ENV === 'production') Sentry.captureException(new Error('failed to fetch votes'));
             return message.error('Something went wrong while fetching votes.', 'Try again later');
         }
 
@@ -136,19 +137,23 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     cmd.exec(message, args, voiceConnection)
         .catch((e: Error): void => {
             if (process.env.NODE_ENV === 'production') {
-              client.sentry.withScope(function (scope: any) {
-                scope.addEventProcessor(function (event: any) {
-                  event.breadcrumbs = [
-                    { author:author.id },
-                    { discordMessage:message.content },
-                    { guild:guild.id },
-                    { channel:channel.id },
-                    { command:cmd.name },
-                  ];
-                  return event;
+                Sentry.withScope(function (scope) {
+                    scope.addEventProcessor(function (event) {
+                        event.breadcrumbs = [{
+                            message: 'Command Breadcrumps',
+                            level: Sentry.Severity.Error,
+                            data: {
+                                author: author.id,
+                                discordMessage: message.content,
+                                guild: guild.id,
+                                channel: channel.id,
+                                command: cmd.name,
+                            },
+                        }];
+                        return event;
+                    });
+                    Sentry.captureException(e);
                 });
-                client.sentry.captureException(e);
-              });
             }
             logger.error(`${cmd.name} crashed: ${e.message}`, e.stack);
             message.error(`
