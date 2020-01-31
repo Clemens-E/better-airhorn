@@ -92,6 +92,6 @@
   },
   "snyk": true,
   "devDependencies": {
-    "ts-node": "^8.5.4"
+    "ts-node": "^8.6.2"
   }
 }
