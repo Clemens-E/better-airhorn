@@ -34,7 +34,7 @@
     "@typescript-eslint/typescript-estree": "^2.19.2",
     "abort-controller": "^3.0.0",
     "appmetrics-dash": "^5.3.0",
-    "better-sqlite-pool": "^0.2.2",
+    "better-sqlite-pool": "^0.2.3",
     "bufferutil": "^4.0.1",
     "common-tags": "^1.8.0",
     "cron": "^1.8.2",
@@ -57,7 +57,7 @@
     "pg": "^7.18.1",
     "readdirp": "^3.3.0",
     "snyk": "^1.291.0",
-    "string-similarity": "^3.0.0",
+    "string-similarity": "^4.0.1",
     "typescript": "^3.7.5",
     "typescript-estree": "^18.1.0",
     "veza": "^1.1.0",
@@ -90,7 +90,7 @@
     "@types/node-fetch": "^2.5.4",
     "@types/pg": "^7.14.1",
     "@types/string-similarity": "^3.0.0",
-    "@types/ws": "^6.0.4",
+    "@types/ws": "^7.2.1"
     "ts-node": "^8.6.2",
     "@types/filesize-parser": "^1.5.0"
   }
