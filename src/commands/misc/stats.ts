@@ -1,13 +1,13 @@
-import { stripIndents } from 'common-tags';
-import { MessageEmbed, version } from 'discord.js';
+import {stripIndents} from 'common-tags';
+import {MessageEmbed, version} from 'discord.js';
 import moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
 import os from 'os';
-import { Config } from '../../../configs/generalConfig';
-import { BClient } from '../../client/Client';
-import { Command } from '../../structures/Command';
-import { BMessage } from '../../structures/Message';
+import {Config} from '../../../configs/config';
+import {BClient} from '../../client/Client';
+import {Command} from '../../structures/Command';
+import {BMessage} from '../../structures/Message';
 
 
 export default class Stats extends Command {
@@ -71,7 +71,7 @@ export default class Stats extends Command {
             `)
             .addField('**> Shards**', shards)
             .addField('**> Other Services**', stripIndents`
-                [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL, this.client.config)}
+                [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL)}
                 [Status Page & Planned Downtimes](${this.client.config.general.statusPage})`)
             .setFooter(
                 `Developer & Owner: ${(await this.client.users.fetch(this.client.config.general.ownerID).catch((): { tag: string } => ({ tag: '' }))).tag}`);
@@ -79,9 +79,9 @@ export default class Stats extends Command {
         (await msg).edit(embed);
     }
 
-    private async checkStatus(url: string, config: Config): Promise<string> {
+    private async checkStatus(url: string): Promise<string> {
         const status = (await fetch(url)).status;
-        return (status < 300 && status >= 200 ? config.emojis.online : config.emojis.offline);
+        return (status < 300 && status >= 200 ? Config.emojis.online : Config.emojis.offline);
     }
 
     private calculateUsage(): { used: number; mostUsed: { name: string; usage: number } } {

@@ -1,12 +1,9 @@
 import { ChildProcess, fork } from 'child_process';
 import EventEmitter from 'events';
 import { Client, ClientSocketStatus } from 'veza';
-
-import { Config } from '../../configs/generalConfig';
+import { Config } from '../../configs/config';
 import { logger } from '../structures/utils/Logger';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config');
 
 export default class IPCChildConnector extends EventEmitter {
     private child: ChildProcess;
@@ -46,7 +43,7 @@ export default class IPCChildConnector extends EventEmitter {
             // kill the process if its running
             if (this.child && this.child.connected) this.child.kill();
 
-            this.child = fork(`${config.general.subTasks}/${this.task}`);
+            this.child = fork(`${Config.general.subTasks}/${this.task}`);
             logger.debug('[IPC]', `forking new ${this.task} child`);
 
             this.child.once('message', async (e): Promise<void> => {

@@ -6,17 +6,12 @@ import lagThingy from 'event-loop-lag';
 import http from 'http';
 import { Pool } from 'pg';
 import readdir from 'readdirp';
-import { Config } from '../../configs/generalConfig';
+import { Config } from '../../configs/config';
 import AudioStorage from '../classes/AudioStorage';
 import { Command } from '../structures/Command';
 import { logger } from '../structures/utils/Logger';
-
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config');
-
 export class BClient extends Client {
-    public config: Config;
+    public config= Config;
     public dtl: any;
     public commands: Map<string, Command>;
     public ready: boolean;
@@ -35,18 +30,17 @@ export class BClient extends Client {
         this.pg = new Pool({
             connectionString: process.env.PSQL,
         });
-        this.AudioStorage = new AudioStorage(this.pg, config.audio.storage);
+        this.AudioStorage = new AudioStorage(this.pg, Config.audio.storage);
         this.commands = new Map<string, Command>();
-        this.config = config;
         this.ready = false;
         if (process.env.NODE_ENV === 'production') Sentry.init({ dsn: process.env.SENTRYURL });
         else logger.warn('process is not running in production');
-        this.dtl = new (require('discord-message-tasks'))(config.emojis.empty, config.emojis.done);
+        this.dtl = new (require('discord-message-tasks'))(Config.emojis.empty, Config.emojis.done);
         this.once('ready', (): boolean => this.ready = true);
         this.settings = new enmap({ name: 'settings' });
         this.usage = new enmap({ name: 'usage' });
         this.messagesPerSecond = 0;
-        this.taskList = new MessageTaskList(config.emojis.loading, config.emojis.done);
+        this.taskList = new MessageTaskList(Config.emojis.loading, Config.emojis.done);
     }
 
     public loadModules(): void {

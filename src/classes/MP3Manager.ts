@@ -5,15 +5,11 @@ import fs from 'fs';
 import { Lame } from 'node-lame';
 import readdir from 'readdirp';
 import { Readable } from 'stream';
-
-import { Config } from '../../configs/generalConfig';
+import { Config } from '../../configs/config';
 import DownloadHandler from './DownloadHandler';
 import FileSystemUtils from './FileSystemUtils';
 import TaskHandler from './TaskManager';
 
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config');
 
 export default class MP3Manager extends TaskHandler {
     private readonly storage: string;
@@ -120,7 +116,7 @@ export default class MP3Manager extends TaskHandler {
 
     public async convertPCMToMP3(inputFile: string, outputFile: string): Promise<void> {
         const taskID = this.addTask('converting file');
-        const encoder = new Lame({ output: outputFile, bitrate: config.audio.bitrate, raw: true, meta: {} }).setFile(inputFile);
+        const encoder = new Lame({ output: outputFile, bitrate: Config.audio.bitrate as any, raw: true, meta: {} }).setFile(inputFile);
         await encoder.encode();
         this.removeTask(taskID);
     }

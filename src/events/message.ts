@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
 import { TextChannel, VoiceConnection } from 'discord.js';
 import fetch from 'node-fetch';
-import { Config } from '../../configs/generalConfig';
+import { Config } from '../../configs/config';
 import { BClient } from '../client/Client';
 import { BMessage } from '../structures/Message';
 import { logger } from '../structures/utils/Logger';
@@ -20,9 +20,6 @@ setInterval((): void => {
 // ! Those commands dont exist anymore, they get transformed to play {command}
 const deprecated = ['airhorn', 'badumtss', 'john', 'letsgo', 'stfu', 'trashman'];
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config');
-
 /**
  *Checks if a user voted on discordbots.com
  *
@@ -30,7 +27,7 @@ const config: Config = require('../../configs/config');
  * @returns {Promise<boolean>} if the user voted or not
  */
 async function hasVoted(userID: string): Promise<boolean> {
-    const res = await fetch(`${config.general.voteURL}/hasVoted`, {
+    const res = await fetch(`${Config.general.voteURL}/hasVoted`, {
         headers: { authorization: process.env.DBLSECRET, 'userid': userID },
     });
     return res.json();

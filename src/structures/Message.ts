@@ -1,8 +1,5 @@
 import { Client, Message, MessageEmbed, Structures, TextChannel } from 'discord.js';
-import { Config } from '../../configs/generalConfig';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const config: Config = require('../../configs/config');
+import { Config } from '../../configs/config';
 
 export class BMessage extends Message {
     public commandFlags: string[];
@@ -16,33 +13,33 @@ export class BMessage extends Message {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
-        embed.setColor(config.colors.error);
+        embed.setColor(Config.colors.error);
         return this.channel.send(embed);
     }
     public success(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
-        embed.setColor(config.colors.success);
+        embed.setColor(Config.colors.success);
         return this.channel.send(embed);
     }
     public warn(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
-        embed.setColor(config.colors.warn);
+        embed.setColor(Config.colors.warn);
         return this.channel.send(embed);
     }
     public neutral(description: string, footer?: string): Promise<Message> {
         const embed = new MessageEmbed();
         if (description) embed.setDescription(description);
         if (footer) embed.setFooter(footer);
-        embed.setColor(config.colors.neutral);
+        embed.setColor(Config.colors.neutral);
         return this.channel.send(embed);
     }
 
 }
 
 Structures.extend('Message', (): any =>
-    BMessage
+    BMessage,
 );
