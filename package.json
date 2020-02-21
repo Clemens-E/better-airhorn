@@ -28,7 +28,7 @@
   "homepage": "https://gitlab.com/Clemens.E/better-airhorn#README",
   "dependencies": {
     "@rocka/mp3-duration": "^2.0.0",
-    "@sentry/node": "^5.12.3",
+    "@sentry/node": "^5.12.4",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
     "@typescript-eslint/typescript-estree": "^2.19.2",
