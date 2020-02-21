@@ -56,7 +56,7 @@
     "node-opus": "^0.3.3",
     "pg": "^7.18.1",
     "readdirp": "^3.3.0",
-    "snyk": "^1.291.0",
+    "snyk": "^1.294.1",
     "string-similarity": "^4.0.1",
     "typescript": "^3.8.2",
     "typescript-estree": "^18.1.0",
