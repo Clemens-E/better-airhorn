@@ -54,7 +54,7 @@
     "node-fetch": "^2.6.0",
     "node-lame": "^1.2.2",
     "node-opus": "^0.3.3",
-    "pg": "^7.18.1",
+    "pg": "^7.18.2",
     "readdirp": "^3.3.0",
     "snyk": "^1.294.1",
     "string-similarity": "^4.0.1",
