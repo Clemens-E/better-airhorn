@@ -23,8 +23,8 @@ jobs:
         CI: true
     - uses: montudor/action-zip@v0.1.0
       with:
-        args: zip -r9q ./artifact-v10.zip node_modules dist
+        args: zip -r9q ./artifact.zip node_modules dist
     - uses: actions/upload-artifact@v1
       with:
-        name: ba-build-artifact
-        path: ./artifact-v10.zip 
+        name: ba-build-${{ github.sha }}
+        path: ./artifact.zip
