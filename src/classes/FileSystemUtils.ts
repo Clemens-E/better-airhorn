@@ -1,6 +1,5 @@
 import fs from 'fs';
 import mk from 'mkdirp';
-import { promisify } from 'util';
 
 export default class FileSystemUtils {
 
@@ -20,6 +19,6 @@ export default class FileSystemUtils {
     }
 
     public static ensureDir(path: string): Promise<any> {
-        return promisify(mk)(path);
+        return mk(path);
     }
 }
