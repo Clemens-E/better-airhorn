@@ -1,5 +1,5 @@
 import SizeParser from 'filesize-parser';
-import {normalize} from 'path';
+import { normalize } from 'path';
 export const Config = {
 
   colors: {

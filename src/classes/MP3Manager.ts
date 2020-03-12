@@ -27,7 +27,7 @@ export default class MP3Manager extends TaskHandler {
             this.scanStorage());
     }
 
-    public get RemovedFiles(): number { return this.removedFiles; }
+    public get RemovedFiles(): number {return this.removedFiles;}
 
     public async exists(filename: string): Promise<boolean> {
         return (await FileSystemUtils.exists(`${this.storage}/${filename}`)).exists;
@@ -94,17 +94,9 @@ export default class MP3Manager extends TaskHandler {
         const fileName = `${this.newFilename()}.mp3`;
         const file = `${this.storage}/${fileName}`;
         const tmp = `${this.storage}/${this.newFilename(true)}.tmp`;
-        const tmp2 = `${this.storage}/${this.newFilename(true)}.tmp`;
-        /*
-        * MP3 (or any other audio format) => PCM => MP3
-        * Why you may ask?
-        * - metadata gets lost
-        * - fixed bitrate which will result in smaller files
-        */
+
         await this.downloader.download(url, tmp);
-        await this.convertMP3ToPCM(tmp, tmp2);
-        await this.convertPCMToMP3(tmp2, file);
-        await FileSystemUtils.delete(tmp2, true);
+        await this.convertAnyToMP3(tmp, file);
         await FileSystemUtils.delete(tmp, true);
         this.removeTask(taskID);
         return fileName;
@@ -114,6 +106,9 @@ export default class MP3Manager extends TaskHandler {
         return this.downloader.duration(`${this.storage}/${fileName}`);
     }
 
+    /**
+     * @deprecated use convertAnyToMP3,µ
+     */
     public async convertPCMToMP3(inputFile: string, outputFile: string): Promise<void> {
         const taskID = this.addTask('converting file');
         const encoder = new Lame({ output: outputFile, bitrate: Config.audio.bitrate as any, raw: true, meta: {} }).setFile(inputFile);
@@ -121,9 +116,22 @@ export default class MP3Manager extends TaskHandler {
         this.removeTask(taskID);
     }
 
+    /**
+     * @deprecated there is no need to convert anything to pcm in this project
+     */
     public convertMP3ToPCM(inputFile: string, outputFile: string): Promise<void> {
         return new Promise((res, rej): void => {
             const child = exec(`ffmpeg -i ${inputFile} -f s16le -acodec pcm_s16le ${outputFile}`);
+            child.on('exit', (code) => {
+                if (code === 0) res();
+                else rej(new Error('child exited with a non zero exit code'));
+            });
+        });
+    }
+
+    public convertAnyToMP3(inputFile: string, outputFile: string): Promise<void> {
+        return new Promise((res, rej): void => {
+            const child = exec(`ffmpeg -i ${inputFile} -vn -ar 44100 -ac 2 -b:a 192k ${outputFile} -map_metadata -1`);
             child.on('exit', (code) => {
                 if (code === 0) res();
                 else rej(new Error('child exited with a non zero exit code'));
