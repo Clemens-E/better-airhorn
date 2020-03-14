@@ -1,11 +1,11 @@
 import * as Sentry from '@sentry/node';
-import { TextChannel, VoiceConnection } from 'discord.js';
+import {TextChannel, VoiceConnection} from 'discord.js';
 import fetch from 'node-fetch';
-import { Config } from '../../configs/config';
-import { BClient } from '../client/Client';
-import { BMessage } from '../structures/Message';
-import { logger } from '../structures/utils/Logger';
-import { Utils } from '../structures/utils/Utils';
+import {Config} from '../../configs/config';
+import {BClient} from '../client/Client';
+import {BMessage} from '../structures/Message';
+import {logger} from '../structures/utils/Logger';
+import {Utils} from '../structures/utils/Utils';
 
 
 let messages = 0;
@@ -58,11 +58,11 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     let cmd = client.commands.get(command);
     let voiceConnection: VoiceConnection;
 
-    if (!channel.permissionsFor(guild.me).has('EMBED_LINKS')) return channel.send('please give me the permission `EMBED_LINKS`.\nI need it to send embeds.');
     // Check for deprecated commands and replace them.
     if (!cmd && deprecated.includes(command)) {
         cmd = client.commands.get('play');
         args = [command];
+        if (!channel.permissionsFor(guild.me).has('EMBED_LINKS')) return channel.send('please give me the permission `EMBED_LINKS`.\nI need it to send embeds.');
         message.warn(`Deprecated, use \`${prefix}play ${command}\` instead`);
     }
 
@@ -85,6 +85,7 @@ module.exports = async (client: BClient, message: BMessage): Promise<any> => {
     const myChannelMissingPerms = channel.permissionsFor(message.guild.me).missing(cmd.botChannelPermissions);
 
     if (myChannelMissingPerms.includes('SEND_MESSAGES')) return;
+    if (!channel.permissionsFor(guild.me).has('EMBED_LINKS')) return channel.send('please give me the permission `EMBED_LINKS`.\nI need it to send embeds.');
     if (myMissingPerms.length > 0) return message.warn(`I'm missing the following permissions:\`\`\`${myMissingPerms.join('\n')}\`\`\``);
     if (myChannelMissingPerms.length > 0) return message.warn(`I'm missing the following permissions:\`\`\`${myChannelMissingPerms.join('\n')}\`\`\``);
     if (uMissingPerms.length > 0) return message.warn(`You are missing the following permissions:\`\`\`${uMissingPerms.join('\n')}\`\`\``);
