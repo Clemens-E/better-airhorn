@@ -85,7 +85,7 @@
     "@types/get-folder-size": "^2.0.0",
     "@types/mkdirp": "^1.0.0",
     "@types/moment-duration-format": "^2.2.2",
-    "@types/node": "^12.12.27",
+    "@types/node": "^13.9.2",
     "@types/node-fetch": "^2.5.5",
     "@types/pg": "^7.14.3",
     "@types/string-similarity": "^3.0.0",
