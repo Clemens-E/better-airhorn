@@ -50,7 +50,7 @@
     "node-lame": "^1.2.2",
     "node-opus": "^0.3.3",
     "pg": "^7.18.2",
-    "readdirp": "^3.3.0",
+    "readdirp": "^3.4.0",
     "string-similarity": "^4.0.1",
     "veza": "^1.1.0",
     "zlib-sync": "^0.1.6"
