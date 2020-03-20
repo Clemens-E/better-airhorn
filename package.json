@@ -89,7 +89,7 @@
     "@types/node-fetch": "^2.5.5",
     "@types/pg": "^7.14.2",
     "@types/string-similarity": "^3.0.0",
-    "@types/ws": "^7.2.2",
+    "@types/ws": "^7.2.3",
     "ts-node": "^8.6.2",
     "@types/filesize-parser": "^1.5.0"
   }
