@@ -87,7 +87,7 @@
     "@types/moment-duration-format": "^2.2.2",
     "@types/node": "^12.12.27",
     "@types/node-fetch": "^2.5.5",
-    "@types/pg": "^7.14.2",
+    "@types/pg": "^7.14.3",
     "@types/string-similarity": "^3.0.0",
     "@types/ws": "^7.2.3",
     "ts-node": "^8.7.0",
