@@ -1,8 +1,8 @@
 import { ClientOptions } from 'discord.js';
 import { ShoriClient, ShoriOptions } from 'shori';
 import { getRepository } from 'typeorm';
-import { Config } from './config/Config';
-import { GuildSettings } from './entities/GuildSettings';
+import { Config } from '../config/Config';
+import { GuildSettings } from '../entities/GuildSettings';
 
 export class BAClient extends ShoriClient {
 
