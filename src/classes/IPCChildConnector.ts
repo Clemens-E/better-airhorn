@@ -1,5 +1,5 @@
 import { ChildProcess, fork } from 'child_process';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import { Client, ClientSocketStatus } from 'veza';
 import { Config } from '../../configs/config';
 import { logger } from '../structures/utils/Logger';
@@ -46,7 +46,7 @@ export default class IPCChildConnector extends EventEmitter {
             this.child = fork(`${Config.general.subTasks}/${this.task}`);
             logger.debug('[IPC]', `forking new ${this.task} child`);
 
-            this.child.once('message', async (e): Promise<void> => {
+            this.child.once('message', async (e: {type: string; data: string}): Promise<void> => {
                 if (e.type !== 'READY_TO_CONNECT') return;
                 this.client.once('ready', (): void => {
                     logger.debug('[IPC]', `connected to ${this.serverLabel}`);
