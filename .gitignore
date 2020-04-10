@@ -2,6 +2,7 @@
 data/
 storage/
 cache/
+file_cache
 
 # Logs
 logs

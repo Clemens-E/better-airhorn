@@ -1,14 +1,15 @@
-import { Command, CommandBase, Message } from 'shori';
+import { stripIndents } from 'common-tags';
 import { MessageEmbed } from 'discord.js';
 import os from 'os';
-import { stripIndents } from 'common-tags';
+import { Command, CommandBase, Message } from 'shori';
 
 @Command('stats', {
     channel: 'any',
     category: 'info',
-    description: 'give information about bot',
+    description: 'give information about the bot',
 })
 export class StatsCommand extends CommandBase {
+
     async exec(message: Message): Promise<any> {
         const memory = process.memoryUsage();
         const embed = new MessageEmbed()
@@ -35,6 +36,7 @@ export class StatsCommand extends CommandBase {
             \`\`\``)
             .setFooter('Made by CHY4E#0505 and notavirus.exe#8093');
 
-        message.channel.send(embed);
+        return message.channel.send(embed);
     }
+
 }

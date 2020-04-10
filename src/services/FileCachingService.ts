@@ -1,10 +1,9 @@
 import { createReadStream, createWriteStream, promises } from 'fs';
+import mkdirp from 'mkdirp';
 import { join } from 'path';
-import { Observable } from 'rxjs';
 import { Service } from 'shori';
 import { Stream } from 'stream';
 import { Config } from '../config/Config';
-import { MinIOService } from './MinIOService';
 
 /**
  * This Service provides methods to access the local file cache
@@ -14,11 +13,9 @@ import { MinIOService } from './MinIOService';
 @Service()
 export class FileCachingService {
 
-  private queue = new Map<number, Observable<void>>();
-
-  constructor(
-    private fileService: MinIOService,
-  ) { }
+  public async init(): Promise<void> {
+    await mkdirp(Config.files.cacheDirectory);
+  }
 
   public getFullPath(otherPart: string): string {
     return join(Config.files.cacheDirectory, otherPart);

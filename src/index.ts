@@ -12,7 +12,7 @@ import { logger } from './utils/Logger';
 createConnection({
   type: 'postgres',
   url: Config.credentials.postgresql.url,
-  logging: false ?? isDev(),
+  logging: isDev(),
   synchronize: isDev(),
   entities,
 })
@@ -29,7 +29,6 @@ createConnection({
     if (isDev()) {
       client.on('debug', (info) => logger.debug(info));
     }
-
     await client.start(Config.credentials.discord.token);
   });
 

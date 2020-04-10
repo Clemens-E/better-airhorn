@@ -1,7 +1,6 @@
 import { Event } from 'shori';
 import { logger } from '../utils/Logger';
 
-
 export class LoggingEvents {
 
     @Event('ready')

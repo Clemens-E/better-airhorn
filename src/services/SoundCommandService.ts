@@ -1,8 +1,8 @@
-import {User, VoiceConnection} from 'discord.js';
-import {Service} from 'shori';
-import {Readable} from 'stream';
-import {SoundFilesManager} from './SoundFilesManager';
-import {StreamConversionService} from './StreamConversionService';
+import { User, VoiceConnection } from 'discord.js';
+import { Service } from 'shori';
+import { Readable } from 'stream';
+import { SoundFilesManager } from './SoundFilesManager';
+import { StreamConversionService } from './StreamConversionService';
 
 /**
  * This Service provides an interface to the complex methods like play, record, download of files

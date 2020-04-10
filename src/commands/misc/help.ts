@@ -21,11 +21,13 @@ export class HelpCommand extends CommandBase {
         new MessageEmbed()
           .setColor(Config.colors.neutral)
           .setTitle(`${cmd.name} Help Page`)
-          .setDescription(stripIndents`
+          .setDescription(
+            stripIndents`
                     Category: ${cmd.category}
                     Description: ${cmd.description}
                     ${cmd.example ? `Example: ${cmd.example}` : ''}
-                    `),
+                    `,
+          ),
       );
     }
 
