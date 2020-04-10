@@ -1,7 +1,7 @@
-import 'dotenv/config';
+require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import { BAClient } from './BAClient';
+import { BAClient } from './client/BAClient';
 import { Config } from './config/Config';
 import { entities } from './entities/entities';
 import './events/LoggingEvents';
