@@ -49,7 +49,7 @@
     "node-fetch": "^2.6.0",
     "node-lame": "^1.2.2",
     "node-opus": "^0.3.3",
-    "pg": "^8.0.0",
+    "pg": "^8.0.2",
     "readdirp": "^3.4.0",
     "string-similarity": "^4.0.1",
     "veza": "^1.1.0",
