@@ -15,7 +15,8 @@ export class PrefixCommand extends CommandBase {
     @UseGuard(new ArgsGuard(1))
     async exec(message: Message, args: string[]): Promise<any> {
         const prefix = args.join(' ');
-        if (prefix.length > 3) { return message.error('prefixes can\'t be longer than 3 characters'); }
+        if (prefix.length < 1) return message.error('prefixes must be at least 1 character');
+        if (prefix.length > 3) return message.error('prefixes can\'t be longer than 3 characters');
 
         const settings = await getRepository(GuildSettings).findOne(message.guild.id);
         settings.prefix = args.join(' ');
