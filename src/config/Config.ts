@@ -14,7 +14,7 @@ export const Config = {
   general: {
 
     prefix: '$',
-    ownerIds: ['196214245770133504'],
+    ownerIds: ['196214245770133504', '329651188641431574'],
 
   },
 
