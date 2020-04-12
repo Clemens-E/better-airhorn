@@ -1,8 +1,6 @@
 import { Command, CommandBase, Message, UseGuard } from 'shori';
 import { ArgsGuard } from '../../guards/ArgsGuard';
-import { Util } from 'discord.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import fetch from 'node-fetch';
+import { TextUploadService } from '../../services/TextUploadService';
 import util from 'util';
 
 @Command('e', {
@@ -13,24 +11,32 @@ import util from 'util';
     onlyOwner: true,
 })
 export class ECommand extends CommandBase {
+    public constructor(private uploader: TextUploadService) { super(); }
+
     @UseGuard(new ArgsGuard(1))
     async exec(message: Message, args: string[]): Promise<any> {
-        let evaled: string | undefined;
+        const m = await message.channel.send('evaluating...');
+        let evaled: any;
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { channel, guild, author } = message;
 
         try {
-            evaled = await eval(`(async () => { ${args.join(' ')} })()`);
+            evaled = eval(args.join(' '));
+            if (evaled instanceof Promise) evaled = await evaled;
         } catch (err) {
             evaled = err.message;
         }
 
-        return this.clean(evaled).then(res => {
-            res.map(e => message.channel.send(`\`\`\`js\n${e}\`\`\``));
-        });
+        const cleaned = await this.clean(evaled);
+        if (cleaned.length > 1950) {
+            const hastebin = `${this.uploader.base}/${await this.uploader.upload(cleaned)}`;
+            return m.edit(hastebin);
+        }
+
+        return m.edit(cleaned);
     }
 
-    async clean(text: any): Promise<string[]> {
+    async clean(text: any): Promise<string> {
         if (!!text && !!text.constructor && (text.constructor.name == 'Promise' || text.constructor.name == 'WrappedPromise')) {
             text = await text;
         }
@@ -50,6 +56,6 @@ export class ECommand extends CommandBase {
             .replace(process.env.MINIO_SK, '// ---------- NO ---------- //')
             .replace(process.env.MINIO_URL, '// ---------- NO ---------- //');
 
-        return Util.splitMessage(text);
+        return text;
     }
 }

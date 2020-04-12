@@ -1,7 +1,7 @@
 import { Command, CommandBase, Message, UseGuard } from 'shori';
 import { ArgsGuard } from '../../guards/ArgsGuard';
-import { Util } from 'discord.js';
 import { exec } from 'child_process';
+import { TextUploadService } from '../../services/TextUploadService';
 
 @Command('exec', {
     channel: 'any',
@@ -11,16 +11,21 @@ import { exec } from 'child_process';
     onlyOwner: true,
 })
 export class ExecCommand extends CommandBase {
+    public constructor(private uploader: TextUploadService) { super(); }
+
     @UseGuard(new ArgsGuard(1))
     async exec(message: Message, args: string[]): Promise<any> {
+        const m = await message.channel.send('executing...');
         const code = args.join(' ');
-        exec(code, async (error, stdout): Promise<any> => {
-            let output: string | string[] = (error || stdout) as string;
-            if ((output as string).length > 1900) output = Util.splitMessage(output, { prepend: '```asciidoc\n', append: '```', maxLength: 1900 });
-            else output = `\`\`\`asciidoc\n${output}\`\`\``;
 
-            if (output instanceof Array) return output.forEach(o => message.channel.send(o));
-            return message.channel.send(output);
+        exec(code, async (error, stdout): Promise<any> => {
+            const output = (error || stdout) as string;
+            if ((output as string).length > 1950) {
+                const hastebin = `${this.uploader.base}/${await this.uploader.upload(output)}`;
+                return m.edit(hastebin);
+            }
+
+            return m.edit(`\`\`\`asciidoc\n${output}\`\`\``);
         });
     }
 }
