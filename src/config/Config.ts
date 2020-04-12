@@ -1,6 +1,11 @@
 import fileSize from 'filesize-parser';
+import { Intents } from 'discord.js';
 
 export const Config = {
+
+  client: {
+    intents: new Intents(['GUILDS', 'GUILD_VOICE_STATES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES']),
+  },
 
   files: {
 

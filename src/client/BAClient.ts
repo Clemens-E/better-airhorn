@@ -1,8 +1,11 @@
 import { ClientOptions } from 'discord.js';
 import { ShoriClient, ShoriOptions } from 'shori';
-import { getRepository } from 'typeorm';
+import { createConnection, getRepository } from 'typeorm';
 import { Config } from '../config/Config';
 import { GuildSettings } from '../entities/GuildSettings';
+import { entities } from '../entities/entities';
+import { isDev } from '../utils/isEnvironment';
+import { logger } from '../utils/Logger';
 
 export class BAClient extends ShoriClient {
 
@@ -22,5 +25,17 @@ export class BAClient extends ShoriClient {
     return settings.prefix;
   }
 
+  public async start(): Promise<string> {
+    await createConnection({
+      type: 'postgres',
+      url: Config.credentials.postgresql.url,
+      logging: isDev(),
+      synchronize: isDev(),
+      entities,
+    });
+
+    if (isDev()) this.on('debug', logger.debug.bind(logger));
+    return this.login(Config.credentials.discord.token);
+  }
 }
 
