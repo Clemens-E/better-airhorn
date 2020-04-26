@@ -1,13 +1,13 @@
-import {stripIndents} from 'common-tags';
-import {MessageEmbed, version} from 'discord.js';
+import { stripIndents } from 'common-tags';
+import { MessageEmbed, version } from 'discord.js';
 import moment from 'moment';
 import 'moment-duration-format';
 import fetch from 'node-fetch';
 import os from 'os';
-import {Config} from '../../../configs/config';
-import {BClient} from '../../client/Client';
-import {Command} from '../../structures/Command';
-import {BMessage} from '../../structures/Message';
+import { Config } from '../../../configs/config';
+import { BClient } from '../../client/Client';
+import { Command } from '../../structures/Command';
+import { BMessage } from '../../structures/Message';
 
 
 export default class Stats extends Command {
@@ -41,7 +41,9 @@ export default class Stats extends Command {
                 [1, 2].includes(x.status) ? this.client.config.emojis.loading :
                     this.client.config.emojis.offline}`).join('\n');
         const usage = this.calculateUsage();
-
+        const owners = await Promise.all(
+          Config.general.ownerIDs.map(id => this.client.users.fetch(id).then(user => user.tag).catch(() => 'Could Not Fetch User')),
+        );
         const embed = new MessageEmbed()
             .setColor(this.client.config.colors.neutral)
             .addField('**> Bot User**', stripIndents`${this.ticks}js
@@ -74,7 +76,7 @@ export default class Stats extends Command {
                 [Vote Server](${this.client.config.general.voteURL}): ${await this.checkStatus(this.client.config.general.voteURL)}
                 [Status Page & Planned Downtimes](${this.client.config.general.statusPage})`)
             .setFooter(
-                `Developer & Owner: ${(await this.client.users.fetch(this.client.config.general.ownerID).catch((): { tag: string } => ({ tag: '' }))).tag}`);
+                `Developer & Owner: ${owners.join(', ')}`);
 
         (await msg).edit(embed);
     }

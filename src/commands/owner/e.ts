@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { Config } from '../../../configs/config';
 import { postText } from '../../classes/TextHandler';
 import { BClient } from '../../client/Client';
 import { Command } from '../../structures/Command';
@@ -26,7 +27,7 @@ export default class Eval extends Command {
     }
 
     public async exec(message: BMessage, args: string[]): Promise<any> {
-        message.channel.send(message.author.id === this.client.config.general.ownerID && !message.commandFlags.includes('b') ?
+        message.channel.send(Config.general.ownerIDs.includes(message.author.id) && !message.commandFlags.includes('b') ?
             await this.asOwner(message, args.join(' '))
             : await this.asGuest(args.join(' ')),
         );

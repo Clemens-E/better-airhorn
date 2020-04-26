@@ -1,5 +1,5 @@
 import SizeParser from 'filesize-parser';
-import { normalize } from 'path';
+import {normalize} from 'path';
 export const Config = {
 
   colors: {
@@ -30,7 +30,7 @@ export const Config = {
   },
 
   general: {
-    ownerID: '196214245770133504',
+    ownerIDs: ['196214245770133504', '329651188641431574'],
     prefix: '$',
     voteURL: 'https://webhooks.chilo.space/better-airhorn',
     subTasks: normalize(`${__dirname}/../src/Subtasks`),
