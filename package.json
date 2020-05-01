@@ -53,7 +53,8 @@
     "readdirp": "^3.4.0",
     "string-similarity": "^4.0.1",
     "veza": "^1.1.0",
-    "zlib-sync": "^0.1.6"
+    "zlib-sync": "^0.1.6",
+    "snyk": "^1.316.1"
   },
   "nodemonConfig": {
     "ignore": [
@@ -76,7 +77,6 @@
     "eslint": "^6.8.0",
     "typescript": "^3.8.3",
     "typescript-estree": "^18.1.0",
-    "snyk": "^1.310.0",
     "@types/common-tags": "^1.8.0",
     "@types/cron": "^1.7.2",
     "@types/eslint": "^6.8.0",
