@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.14.0
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -15,3 +15,18 @@ patch:
   SNYK-JS-TREEKILL-536781:
     - snyk > snyk-sbt-plugin > tree-kill:
         patched: '2019-12-12T00:16:17.550Z'
+  SNYK-JS-LODASH-567746:
+    - better-sqlite-pool > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - enmap > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - appmetrics-dash > appmetrics > ibmapm-embed > log4js > streamroller > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - appmetrics-dash > appmetrics > ibmapm-embed > ibmapm-restclient > kubernetes-client > async > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - appmetrics-dash > appmetrics > ibmapm-embed > log4js > streamroller > async > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - appmetrics-dash > appmetrics > ibmapm-embed > ibmapm-restclient > log4js > streamroller > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
+    - appmetrics-dash > appmetrics > ibmapm-embed > ibmapm-restclient > log4js > streamroller > async > lodash:
+        patched: '2020-05-22T14:58:59.450Z'
