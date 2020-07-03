@@ -74,7 +74,7 @@
     "@typescript-eslint/parser": "^2.34.0",
     "@typescript-eslint/typescript-estree": "^3.4.0",
     "eslint": "^6.8.0",
-    "typescript": "^3.9.5",
+    "typescript": "^3.9.6",
     "typescript-estree": "^18.1.0",
     "snyk": "^1.349.0",
     "@types/common-tags": "^1.8.0",
