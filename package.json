@@ -28,7 +28,7 @@
   "homepage": "https://gitlab.com/Clemens.E/better-airhorn#README",
   "dependencies": {
     "@rocka/mp3-duration": "^2.0.0",
-    "@sentry/node": "^5.19.1",
+    "@sentry/node": "^5.19.2",
     "appmetrics-dash": "^5.3.0",
     "better-sqlite-pool": "^0.3.0",
     "bufferutil": "^4.0.1",
