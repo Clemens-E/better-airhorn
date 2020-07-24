@@ -76,7 +76,7 @@
     "eslint": "^6.8.0",
     "typescript": "^3.9.7",
     "typescript-estree": "^18.1.0",
-    "snyk": "^1.362.1",
+    "snyk": "^1.366.0",
     "@types/common-tags": "^1.8.0",
     "@types/cron": "^1.7.2",
     "@types/eslint": "^7.2.0",
