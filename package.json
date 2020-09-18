@@ -38,7 +38,7 @@
     "discord-message-tasks": "^1.0.5",
     "discord.js": "github:vladfrangu/discOwOd.js#fix-internal-sharding-again",
     "dotenv": "^8.2.0",
-    "enmap": "^5.7.1",
+    "enmap": "^5.7.3",
     "event-loop-lag": "^1.4.0",
     "filesize-parser": "^1.5.0",
     "js-logger": "^1.6.0",
