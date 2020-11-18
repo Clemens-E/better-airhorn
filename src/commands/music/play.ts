@@ -24,7 +24,8 @@ export default class Play extends Command {
         });
     }
 
-    private reject(msg: BMessage): Promise<Message> {
+    private reject(msg: BMessage, voice: VoiceConnection): Promise<Message> {
+        voice.disconnect();
         return msg.error('Missing permissions to this Audio');
     }
 
@@ -56,10 +57,10 @@ export default class Play extends Command {
 
         switch (cmd.privacymode) {
             case 1:
-                if (author.id !== cmd.user) return this.reject(message);
+                if (author.id !== cmd.user) return this.reject(message, voice);
                 break;
             case 2:
-                if (author.id !== cmd.user && guild.id !== cmd.guild) return this.reject(message);
+                if (author.id !== cmd.user && guild.id !== cmd.guild) return this.reject(message, voice);
                 break;
             case 3:
                 break;
